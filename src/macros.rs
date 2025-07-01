@@ -324,3 +324,91 @@ macro_rules! info {
         $crate::info!(74, $message);
     };
 }
+
+/// colorfully formats a [u8] as hex => binary => decimal (=> char (if ascii))
+#[macro_export]
+macro_rules! format_byte {
+    ($byte:expr $(,)? ) => {{
+        use $crate::color::{auto, fore, from_bytes, pad};
+        let color = $crate::color::from_bytes(&[$byte]);
+        [
+            $crate::color::fore(format!("0x{:02x}", $byte), color.into()),
+            $crate::color::fore(format!("0b{:08b}", $byte), color.into()),
+            $crate::color::fore(format!("{:#?}", $byte), color.into()),
+            if $byte < 127 {
+                $crate::color::fore(
+                    format!("{:#?}", char::from($byte).to_string()),
+                    color.into(),
+                )
+            } else {
+                String::new()
+            },
+        ]
+        .iter()
+        .filter(|c| !c.is_empty())
+        .map(String::from)
+        .collect::<Vec<String>>()
+        .join(" => ")
+    }};
+}
+/// [std::dbg] equivalent for u8 which uses [format_byte] to display the byte
+#[macro_export]
+macro_rules! dbg_byte {
+    ($byte:expr $(,)? ) => {{
+        use $crate::color::{auto, fore, from_display};
+        let color = $crate::color::from_display($byte);
+        eprintln!(
+            "\n{} = {}",
+            $crate::color::auto(stringify!($byte)),
+            [$crate::format_byte!($byte), $crate::location!(),].join("\t"),
+        );
+        $byte
+    }};
+}
+
+/// [std::dbg] equivalent for u8 which uses [format_bytes] to display the byte slice
+#[macro_export]
+macro_rules! dbg_bytes {
+    ($slice:expr $(,)? ) => {{
+        use $crate::color::{auto, back, fore, from_display, pad};
+        use $crate::indent;
+        eprintln!(
+            "\n{} = {}",
+            $crate::color::auto(stringify!($slice)),
+            [$crate::format_bytes!($slice), $crate::location!(),].join(" => ")
+        );
+        $slice
+    }};
+}
+/// colorfully formats a slice or vector of [u8] as hex => binary => decimal (=> char (if ascii))
+#[macro_export]
+macro_rules! format_bytes {
+    ($slice:expr $(,)? ) => {
+        $crate::format_bytes!($slice, " => ");
+    };
+    ($slice:expr, $sep:literal $(,)? ) => {{
+        [
+            format!(
+                "[\n{}]",
+                $slice
+                    .iter()
+                    .map(Clone::clone)
+                    .map(|byte| format!(
+                        "{}, // {}\n",
+                        $crate::indent!($crate::format_byte!(byte)),
+                        $crate::color::fore(format!("{:#?}", char::from(byte).to_string()), 237),
+                    ))
+                    .collect::<Vec<String>>()
+                    .join("")
+            ),
+            std::str::from_utf8($slice)
+                .map(|s| format!("{s:#?}"))
+                .unwrap_or_default(),
+        ]
+        .iter()
+        .filter(|c| !c.is_empty())
+        .map(String::from)
+        .collect::<Vec<String>>()
+        .join($sep.to_string().as_str())
+    }};
+}
