@@ -93,15 +93,17 @@ macro_rules! tag {
 #[macro_export]
 macro_rules! dbg {
     ($arg:expr $(,)? ) => {{
-        let obj = format!("{}", [$(
-            $crate::indent!(format!("{} = {}", $crate::color::auto(stringify!($arg)), $crate::color::auto(format!("{:#?}", &$arg)))),
-        )*].iter().map($crate::color::reset).collect::<Vec<String>>().join("\n"));
+        let obj = $crate::indent!(
+                format!(
+                    "{} = {}\n",
+                    $crate::color::auto(stringify!(&$arg)),
+                    $crate::color::auto(format!("{:#?}", &$arg))));
         eprintln!("{}", $crate::color::reset([$crate::location!(begin), obj, $crate::location!(end)].join("\n")));
         $arg
     }};
-    ($( $arg:expr ),* $(,)? ) => {
+    ($( $arg:expr ),* $(,)? ) => {{
         $($crate::dbg!($arg))*
-    };
+    }};
 }
 
 /// indents an implementor of [std::fmt::Display]
@@ -149,7 +151,6 @@ macro_rules! function_name {
         name
     }};
 }
-
 
 /// colorfully steps through code
 #[macro_export]
