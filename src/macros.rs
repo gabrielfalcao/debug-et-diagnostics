@@ -93,16 +93,35 @@ macro_rules! tag {
 #[macro_export]
 macro_rules! dbg {
     ($arg:expr $(,)? ) => {{
-        let obj = $crate::indent!(
-                format!(
-                    "{} = {}\n",
-                    $crate::color::auto(stringify!(&$arg)),
-                    $crate::color::auto(format!("{:#?}", &$arg))));
-        eprintln!("{}", $crate::color::reset([$crate::location!(begin), obj, $crate::location!(end)].join("\n")));
+        eprintln!("{}", $crate::format_dbg_location!($arg));
         $arg
     }};
     ($( $arg:expr ),* $(,)? ) => {{
-        $($crate::dbg!($arg))*
+        eprintln!("{}", $crate::format_dbg_location!($($arg),*));
+    }};
+}
+
+#[macro_export]
+macro_rules! format_dbg {
+    ($arg:expr $(,)? ) => {{
+        $crate::indent!(
+                format!(
+                    "{} = {}\n",
+                    $crate::color::auto(stringify!(&$arg)),
+                    $crate::color::auto(format!("{:#?}", &$arg))))
+
+    }};
+    ($( $arg:expr ),* $(,)? ) => {{
+        [$($crate::format_dbg!($arg)),*].join("\n")
+    }};
+}
+#[macro_export]
+macro_rules! format_dbg_location {
+    ($arg:expr $(,)? ) => {{
+        format!("{}", $crate::color::reset([$crate::location!(begin), $crate::format_dbg!($arg), $crate::location!(end)].join("\n")))
+    }};
+    ($( $arg:expr ),* $(,)? ) => {{
+        [$crate::location!(begin), $($crate::format_dbg!($arg)),*, $crate::location!(end)].join("\n")
     }};
 }
 
