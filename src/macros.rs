@@ -347,6 +347,51 @@ macro_rules! info {
 /// colorfully formats a [u8] as hex => binary => decimal (=> char (if ascii))
 #[macro_export]
 macro_rules! format_byte {
+    (hex_only, $byte:expr $(,)? ) => {{
+        use $crate::color::{auto, fore, from_byte, pad};
+        let color = $crate::color::from_byte($byte);
+        $crate::color::fore(format!("0x{:02x}", $byte), color.into())
+    }};
+    (hex, $byte:expr $(,)? ) => {{
+        use $crate::color::{auto, fore, from_bytes, pad};
+        let color = $crate::color::from_bytes(&[$byte]);
+        [
+            $crate::color::fore(format!("0x{:02x}", $byte), color.into()),
+            if $byte < 127 {
+                $crate::color::fore(
+                    format!("{:#?}", char::from($byte).to_string()),
+                    color.into(),
+                )
+            } else {
+                String::new()
+            },
+        ]
+        .iter()
+        .filter(|c| !c.is_empty())
+        .map(String::from)
+        .collect::<Vec<String>>()
+        .join(" => ")
+    }};
+    (bin, $byte:expr $(,)? ) => {{
+        use $crate::color::{auto, fore, from_bytes, pad};
+        let color = $crate::color::from_bytes(&[$byte]);
+        [
+            $crate::color::fore(format!("0b{:08b}", $byte), color.into()),
+            if $byte < 127 {
+                $crate::color::fore(
+                    format!("{:#?}", char::from($byte).to_string()),
+                    color.into(),
+                )
+            } else {
+                String::new()
+            },
+        ]
+        .iter()
+        .filter(|c| !c.is_empty())
+        .map(String::from)
+        .collect::<Vec<String>>()
+        .join(" => ")
+    }};
     ($byte:expr $(,)? ) => {{
         use $crate::color::{auto, fore, from_bytes, pad};
         let color = $crate::color::from_bytes(&[$byte]);
@@ -385,7 +430,7 @@ macro_rules! dbg_byte {
     }};
 }
 
-/// [std::dbg] equivalent for u8 which uses [format_bytes] to display the byte slice
+/// [std::dbg] equivalent for `&[u8]` which uses [format_bytes] to display the byte slice
 #[macro_export]
 macro_rules! dbg_bytes {
     ($slice:expr $(,)? ) => {{
@@ -399,11 +444,38 @@ macro_rules! dbg_bytes {
         $slice
     }};
 }
+/// [std::dbg] equivalent for `&[u8]` which uses [format_bytes] to display the byte slice in base 16 and string
+#[macro_export]
+macro_rules! dbg_bytes_str {
+    ($slice:expr $(,)? ) => {{
+        use $crate::color::{auto, back, fore, from_display, pad};
+        use $crate::indent;
+        eprintln!(
+            "\n{}",
+            [
+                $crate::location!(begin),
+                String::new(),
+                $crate::color::auto(stringify!($slice)),
+                $crate::format_bytes_str!($slice),
+                String::new(),
+                $crate::location!(end),
+            ]
+            .join("\n")
+        );
+        $slice
+    }};
+}
 /// colorfully formats a slice or vector of [u8] as hex => binary => decimal (=> char (if ascii))
 #[macro_export]
 macro_rules! format_bytes {
     ($slice:expr $(,)? ) => {
         $crate::format_bytes!($slice, " => ");
+    };
+    (hex, $slice:expr $(,)? ) => {
+        $crate::format_bytes!(hex, $slice, " => ");
+    };
+    (bin, $slice:expr $(,)? ) => {
+        $crate::format_bytes!(bin, $slice, " => ");
     };
     ($slice:expr, $sep:literal $(,)? ) => {{
         [
@@ -419,6 +491,97 @@ macro_rules! format_bytes {
                     ))
                     .collect::<Vec<String>>()
                     .join("")
+            ),
+            format!("{} bytes", $slice.len()),
+            std::str::from_utf8($slice)
+                .map(|s| {
+                    let chars = s.chars().collect::<Vec<char>>();
+                    format!(
+                        "\"{s}\" => {} chars => [{}]",
+                        chars.len(),
+                        chars
+                            .iter()
+                            .map(|c| format!("{c:?}"))
+                            .collect::<Vec<String>>()
+                            .join(", ")
+                    )
+                })
+                .unwrap_or_default(),
+        ]
+        .iter()
+        .filter(|c| !c.is_empty())
+        .map(String::from)
+        .collect::<Vec<String>>()
+        .join($sep.to_string().as_str())
+    }};
+    (hex, $slice:expr, $sep:literal $(,)? ) => {{
+        [
+            format!(
+                "[\n{}]",
+                $slice
+                    .iter()
+                    .map(Clone::clone)
+                    .map(|byte| format!(
+                        "{}, // {}\n",
+                        $crate::indent!($crate::format_byte!(hex, byte)),
+                        $crate::color::fore(format!("{:#?}", char::from(byte).to_string()), 237),
+                    ))
+                    .collect::<Vec<String>>()
+                    .join("")
+            ),
+            std::str::from_utf8($slice)
+                .map(|s| format!("{s:#?}"))
+                .unwrap_or_default(),
+        ]
+        .iter()
+        .filter(|c| !c.is_empty())
+        .map(String::from)
+        .collect::<Vec<String>>()
+        .join($sep.to_string().as_str())
+    }};
+    (bin, $slice:expr, $sep:literal $(,)? ) => {{
+        [
+            format!(
+                "[\n{}]",
+                $slice
+                    .iter()
+                    .map(Clone::clone)
+                    .map(|byte| format!(
+                        "{}, // {}\n",
+                        $crate::indent!($crate::format_byte!(bin, byte)),
+                        $crate::color::fore(format!("{:#?}", char::from(byte).to_string()), 237),
+                    ))
+                    .collect::<Vec<String>>()
+                    .join("")
+            ),
+            std::str::from_utf8($slice)
+                .map(|s| format!("{s:#?}"))
+                .unwrap_or_default(),
+        ]
+        .iter()
+        .filter(|c| !c.is_empty())
+        .map(String::from)
+        .collect::<Vec<String>>()
+        .join($sep.to_string().as_str())
+    }};
+}
+
+/// colorfully formats a slice or vector of [u8] as hex
+#[macro_export]
+macro_rules! format_bytes_str {
+    ($slice:expr $(,)? ) => {
+        $crate::format_bytes_str!($slice, " => ");
+    };
+    ($slice:expr, $sep:literal $(,)? ) => {{
+        [
+            format!(
+                "[{}]",
+                $slice
+                    .iter()
+                    .map(Clone::clone)
+                    .map(|byte| $crate::format_byte!(hex_only, byte))
+                    .collect::<Vec<String>>()
+                    .join(", ")
             ),
             std::str::from_utf8($slice)
                 .map(|s| format!("{s:#?}"))

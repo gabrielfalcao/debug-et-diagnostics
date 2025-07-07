@@ -201,3 +201,26 @@ fn io_term_cols() -> std::io::Result<usize> {
 pub fn term_cols() -> usize {
     io_term_cols().unwrap_or_else(|_| DEFAULT_COLUMNS)
 }
+
+/// determine an ANSI-256 color determined by [`from_bytes(&[byte])`]
+pub fn from_byte(byte: u8) -> u8 {
+    from_bytes(&[byte]).into()
+}
+
+/// auto-colorize the given byte with the color determined by [from_byte]
+pub fn byte(byte: u8) -> String {
+    let (fg, bg) = couple(from_byte(byte).into());
+    ansi(byte, fg as usize, bg as usize)
+}
+
+/// auto-colorize the given byte in hex format with the color determined by [from_byte]
+pub fn byte_hex(byte: u8) -> String {
+    let (fg, bg) = couple(from_byte(byte).into());
+    ansi(format!("0x{byte:02x}"), fg as usize, bg as usize)
+}
+
+/// auto-colorize the given byte in bin format with the color determined by [from_byte]
+pub fn byte_bin(byte: u8) -> String {
+    let (fg, bg) = couple(from_byte(byte).into());
+    ansi(format!("0b{byte:08b}"), fg as usize, bg as usize)
+}
