@@ -185,40 +185,7 @@ macro_rules! step {
     }};
     (length=$length:expr, $text:expr $(,)?) => {{
         let (bg, fg) = $crate::color::couple(line!() as usize);
-        let text = $text.to_string();
-        let bar = $crate::color::ansi(
-            " ".repeat($length),
-            fg.into(),
-            bg.into(),
-        );
-        eprintln!(
-            "\n{}",
-            [
-                bar.clone(),
-                $crate::color::ansi(
-                    $crate::color::pad_columns(
-                        [
-                            $crate::function_name!(),
-                            [
-                                file!().to_string(),
-                                line!().to_string(),
-                            ].join(":")
-                        ].join(" ").to_string()
-                    ),
-                    fg.into(),
-                    bg.into(),
-                ),
-                $crate::color::ansi(
-                    $crate::color::pad_columns(
-                        if text.is_empty() { String::new() } else { format!("{}", text) }
-                    ),
-                    bg.into(),
-                    fg.into(),
-                ),
-                bar.clone(),
-            ].join("\n")
-        );
-
+        $crate::step!(bg=bg, fg=fg, length=$length, $text)
     }};
     (bg=$bg:expr, fg=$fg:expr, length=$length:expr, $text:expr $(,)?) => {{
         let text = $text.to_string();
@@ -257,6 +224,29 @@ macro_rules! step {
     }};
     (length=$length:expr, $text:expr, $( $arg:expr ),* $(,)? ) => {{
         $crate::step!(length=$length, format_args!($text, $($arg,)*))
+    }};
+    () => {{
+        $crate::step!("")
+    }};
+}
+/// colorfully steps through code debugging given expressions
+#[macro_export]
+macro_rules! step_dbg {
+    (bg=$bg:expr, fg=$fg:expr, length=$length:expr, $($arg:expr),* $(,)?) => {{
+        let text = format!("{}", [
+            $($crate::indent!(format!("{} = {}", $crate::color::auto(stringify!($arg)), $crate::color::auto(format!("{:#?}", $arg))))),*
+        ].join("\n"));
+        $crate::step!(bg=$bg, fg=$fg, length=$length, text);
+    }};
+    (bg=$bg:expr, fg=$fg:expr, $($arg:expr),* $(,)?) => {{
+        $crate::step_dbg!(bg=$bg, fg=$fg, length=$crate::color::term_cols(), $($arg),*)
+    }};
+    (fg=$fg:expr, $($arg:expr),* $(,)?) => {{
+        $crate::step_dbg!(bg=$fg, fg=$crate::color::invert_bw($fg), length=$crate::color::term_cols(), $($arg),*)
+    }};
+    ($($arg:expr),* $(,)?) => {{
+        let fg=$crate::color::wrap(line!() as usize);
+        $crate::step_dbg!(bg=fg, fg=$crate::color::invert_bw(fg), length=$crate::color::term_cols(), $($arg),*)
     }};
     () => {{
         $crate::step!("")
@@ -421,11 +411,11 @@ macro_rules! dbg_byte {
     ($byte:expr $(,)? ) => {{
         use $crate::color::{auto, fore, from_display};
         let color = $crate::color::from_display($byte);
-        eprintln!(
-            "\n{} = {}",
+        $crate::step!(format!(
+            "{} = {}",
             $crate::color::auto(stringify!($byte)),
-            [$crate::format_byte!($byte), $crate::location!(),].join("\t"),
-        );
+            $crate::format_byte!($byte)
+        ));
         $byte
     }};
 }
@@ -435,12 +425,11 @@ macro_rules! dbg_byte {
 macro_rules! dbg_bytes {
     ($slice:expr $(,)? ) => {{
         use $crate::color::{auto, back, fore, from_display, pad};
-        use $crate::indent;
-        eprintln!(
-            "\n{} = {}",
+        $crate::step!($crate::indent!(format!(
+            "{} = {}",
             $crate::color::auto(stringify!($slice)),
-            [$crate::format_bytes!($slice), $crate::location!(),].join(" => ")
-        );
+            $crate::format_bytes!($slice)
+        )));
         $slice
     }};
 }
@@ -464,6 +453,17 @@ macro_rules! dbg_bytes_str {
         );
         $slice
     }};
+}
+/// [std::dbg_bytes_str] equivalent which only displays debug message if the given bytes are valid UTF-8
+#[macro_export]
+macro_rules! dbg_bytes_if_str {
+    ($slice:expr $(,)? ) => {
+        if let Ok(c) = std::str::from_utf8($slice) {
+            $crate::dbg_bytes!($slice)
+        } else {
+            $slice
+        }
+    };
 }
 /// colorfully formats a slice or vector of [u8] as hex => binary => decimal (=> char (if ascii))
 #[macro_export]
