@@ -65,28 +65,217 @@ macro_rules! filename {
 /// colorfully wraps the given text in "<", ">": "<{text}>"
 #[macro_export]
 macro_rules! tag {
-    ($arg:expr) => {{
-        $crate::tag!($arg, 7)
+
+    (@open, $arg:expr) => {{
+        $crate::tag!(@open, $arg, 7, @color=fore)
     }};
-    (close, $arg:expr) => {{
-        $crate::tag!(close, $arg, 7)
+    (@open, $arg:expr, @color=auto) => {{
+        $crate::tag!(@open, $arg, 7, @color=auto)
     }};
-    ($arg:expr, $color:literal) => {{
+    (@open, $arg:expr, @color=fore) => {{
+        $crate::tag!(@open, $arg, 7, @color=fore)
+    }};
+    (@open, $arg:expr, @color=$color:expr) => {{
+        $crate::tag!(@open, $arg, 7, @color=$color)
+    }};
+
+    (@open, $arg:expr, $color:expr) => {{
+        $crate::tag!(@open, $arg, $color, @color=$color)
+    }};
+    (@open, $arg:expr, $color:expr, @color=auto) => {{
+        let auto_color = $crate::color::from_display($arg) as usize;
         format!(
             "{}{}{}",
             $crate::color::fore("<", $color),
-            $crate::color::auto($arg),
+            $crate::color::fore($arg, auto_color),
             $crate::color::fore(">", $color),
         )
     }};
-    (close, $arg:expr, $color:literal) => {{
+    (@open, $arg:expr, $color:expr, @color=fore) => {{
+        format!(
+            "{}{}{}",
+            $crate::color::fore("<", $color),
+            $crate::color::fore($arg, $color),
+            $crate::color::fore(">", $color),
+        )
+    }};
+    (@open, $arg:expr, $color:expr, @color=$fore:expr) => {{
+        format!(
+            "{}{}{}",
+            $crate::color::fore("<", $color),
+            $crate::color::fore($arg, $fore),
+            $crate::color::fore(">", $color),
+        )
+    }};
+
+    (@close, $arg:expr) => {{
+        $crate::tag!(@close, $arg, 7, @color=fore)
+    }};
+    (@close, $arg:expr, @color=auto) => {{
+        $crate::tag!(@close, $arg, 7, @color=auto)
+    }};
+    (@close, $arg:expr, @color=fore) => {{
+        $crate::tag!(@close, $arg, 7, @color=fore)
+    }};
+    (@close, $arg:expr, @color=$color:expr) => {{
+        $crate::tag!(@close, $arg, 7, @color=$color)
+    }};
+
+    (@close, $arg:expr, $color:expr) => {{
+        $crate::tag!(@close, $arg, $color, @color=$color)
+    }};
+    (@close, $arg:expr, $color:expr, @color=auto) => {{
+        let auto_color = $crate::color::from_display($arg) as usize;
         format!(
             "{}{}{}",
             $crate::color::fore("</", $color),
-            $arg,
+            $crate::color::fore($arg, auto_color),
             $crate::color::fore(">", $color),
         )
     }};
+    (@close, $arg:expr, $color:expr, @color=fore) => {{
+        format!(
+            "{}{}{}",
+            $crate::color::fore("</", $color),
+            $crate::color::fore($arg, $color),
+            $crate::color::fore(">", $color),
+        )
+    }};
+    (@close, $arg:expr, $color:expr, @color=$fore:expr) => {{
+        format!(
+            "{}{}{}",
+            $crate::color::fore("</", $color),
+            $crate::color::fore($arg, $fore),
+            $crate::color::fore(">", $color),
+        )
+    }};
+
+
+    (@wrap, $tag:expr, $arg:expr) => {{
+        [
+            $crate::tag!(@open, $tag),
+            $crate::indent!($crate::color::fore($arg, 7)),
+            $crate::tag!(@close, $tag),
+        ].join("\n").to_string()
+    }};
+    (@wrap, $tag:expr, $arg:expr, @color=auto) => {{
+        [
+            $crate::tag!(@open, $tag, 7, @color=auto),
+            $crate::indent!($crate::color::auto($arg)),
+            $crate::tag!(@close, $tag, 7, @color=auto),
+        ].join("\n").to_string()
+
+    }};
+    (@wrap, $tag:expr, $arg:expr, @color=fore) => {{
+        [
+            $crate::tag!(@open, $tag, 7, @color=fore),
+            $crate::indent!($crate::color::fore($arg, 7)),
+            $crate::tag!(@close, $tag, 7, @color=fore),
+
+        ].join("\n").to_string()
+    }};
+    (@wrap, $tag:expr, $arg:expr, @color=$color:expr) => {{
+        [
+            $crate::tag!(@open, $arg, $color, @color=$color),
+            $crate::indent!($crate::color::fore($arg, $color)),
+            $crate::tag!(@close, $arg, $color, @color=$color),
+        ].join("\n").to_string()
+    }};
+
+    (@wrap, $tag:expr, $arg:expr, $color:expr) => {{
+        [
+            $crate::tag!(@open, $tag, $color, @color=$color),
+            $crate::indent!($crate::color::fore($arg, $color)),
+            $crate::tag!(@close, $tag, $color, @color=$color),
+        ].join("\n").to_string()
+    }};
+    (@wrap, $tag:expr, $arg:expr, $color:expr, @color=auto) => {{
+        let auto_tag_color = $crate::color::from_display($tag) as usize;
+        let auto_arg_color = $crate::color::from_display($arg) as usize;
+        [
+            $crate::tag!(@open, $tag, $color, @color=auto_tag_color),
+            $crate::indent!($crate::color::fore($arg, auto_arg_color)),
+            $crate::tag!(@close, $tag, $color, @color=auto_tag_color),
+        ].join("\n").to_string()
+    }};
+    (@wrap, $tag:expr, $arg:expr, $color:expr, @color=fore) => {{
+        [
+            $crate::tag!(@open, $tag, $color, @color=fore),
+            $crate::indent!($crate::color::fore($arg, $color)),
+            $crate::tag!(@close, $tag, $color, @color=fore),
+        ].join("\n").to_string()
+    }};
+    (@wrap, $tag:expr, $arg:expr, $color:expr, @color=$fore:expr) => {{
+        [
+            $crate::tag!(@open, $tag, $color, @color=$fore),
+            $crate::indent!($crate::color::fore($arg, $color)),
+            $crate::tag!(@close, $tag, $color, @color=$fore),
+        ].join("\n").to_string()
+    }};
+
+    // (@wrap, $tag:expr, $arg:expr) => {{
+    //     [
+    //         $crate::tag!(@open, $arg, 7, @color=fore)
+    //     ].join("")
+    // }};
+    // (@wrap, $tag:expr, $arg:expr, $color:expr) => {{
+    //     $crate::tag!(@wrap, $arg, $color, @color=$color)
+    // }};
+    // (@wrap, $tag:expr, $arg:expr, @color=auto) => {{
+    //     $crate::tag!(@wrap, $arg, 7, @color=auto)
+    // }};
+    // (@wrap, $tag:expr, $arg:expr, $color:expr, @color=auto) => {{
+    //     $crate::tag!(@wrap, $arg, $color, @color=auto)
+    // }};
+    // (@wrap, $tag:expr, $arg:expr, $color:expr, @color=auto) => {{
+    //     let auto_color = $crate::color::from_display($arg);
+    //     format!(
+    //         "{}{}{}",
+    //         $crate::color::fore("<", $color),
+    //         $crate::color::fore($arg, auto_color),
+    //         $crate::color::fore(">", $color),
+    //     )
+    // }};
+    // (@wrap, $tag:expr, $arg:expr, $color:expr, @color=fore) => {{
+    //     format!(
+    //         "{}{}{}",
+    //         $crate::color::fore("<", $color),
+    //         $crate::color::fore($arg, $color),
+    //         $crate::color::fore(">", $color),
+    //     )
+    // }};
+    // (@wrap, $tag:expr, $arg:expr, $color:expr, @color=$fore:expr) => {{
+    //     format!(
+    //         "{}{}{}",
+    //         $crate::color::fore("<", $color),
+    //         $crate::color::fore($arg, $fore),
+    //         $crate::color::fore(">", $color),
+    //     )
+    // }};
+
+
+
+
+
+    ($arg:expr) => {{
+        $crate::tag!(@open, $arg, 7)
+    }};
+    ($arg:expr, $color:expr) => {{
+        $crate::tag!(@open, $arg, $color)
+    }};
+    ($arg:expr, @color=auto) => {{
+        $crate::tag!(@open, $arg, 7, @color=auto)
+    }};
+    ($arg:expr, @color=fore) => {{
+        $crate::tag!(@open, $arg, 7, @color=fore)
+    }};
+    ($arg:expr, @color=$fore:expr) => {{
+        $crate::tag!(@open, $arg, 7, @color=$fore)
+    }};
+    ($arg:expr, $color:expr, @color=$fore:expr) => {{
+        $crate::tag!(@open, $arg, $color, @color=$fore)
+    }};
+
 }
 
 /// colorful alternative to [std::dbg]
@@ -188,6 +377,9 @@ macro_rules! step {
         $crate::step!(bg=bg, fg=fg, length=$length, $text)
     }};
     (bg=$bg:expr, fg=$fg:expr, length=$length:expr, $text:expr $(,)?) => {{
+        let bg = $crate::color::wrap($bg as usize);
+        let fg = $crate::color::wrap($fg as usize);
+
         let text = $text.to_string();
         let bar = $crate::color::ansi(
             " ".repeat($length),
