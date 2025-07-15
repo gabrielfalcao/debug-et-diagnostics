@@ -224,3 +224,57 @@ pub fn byte_bin(byte: u8) -> String {
     let (fg, bg) = couple(from_byte(byte).into());
     ansi(format!("0b{byte:08b}"), fg as usize, bg as usize)
 }
+
+pub const STD_COLORS: [[u8; 3]; 16] = [
+    [0x00u8, 0x00u8, 0x00u8], //  0x00u8 black
+    [0x80u8, 0x00u8, 0x00u8], //  1 red
+    [0x00u8, 0x80u8, 0x00u8], //  2 green
+    [0x80u8, 0x80u8, 0x00u8], //  3 yellow
+    [0x00u8, 0x00u8, 0x80u8], //  4 blue
+    [0x80u8, 0x00u8, 0x80u8], //  5 magenta
+    [0x00u8, 0x80u8, 0x80u8], //  6 cyan
+    [0xc0u8, 0xc0u8, 0xc0u8], //  7 white (light grey)
+    [0x80u8, 0x80u8, 0x80u8], //  8 grey
+    [0xffu8, 0x00u8, 0x00u8], //  9 bright red
+    [0xffu8, 0xffu8, 0x00u8], // 10 bright green
+    [0x00u8, 0xffu8, 0x00u8], // 11 bright yellow
+    [0x00u8, 0x00u8, 0xffu8], // 12 bright blue
+    [0xffu8, 0x00u8, 0xffu8], // 13 bright magenta
+    [0x00u8, 0xffu8, 0xffu8], // 14 bright cyan
+    [0xffu8, 0xffu8, 0xffu8], // 15 bright white
+];
+pub fn cube_ansi_256(color: usize, op: usize) -> u8 {
+    let color = wrap(color) as usize;
+    let cube = ((color - 16) / op) % 6;
+    if cube == 0 {
+        0u8
+    } else {
+        wrap((14135 + 10280 * cube) / 256)
+    }
+}
+pub fn get_ansi_rgb(color: usize) -> [u8; 3] {
+    let color = wrap(color) as usize;
+    match color {
+        0..16 => [
+            STD_COLORS[color * 3 + 0],
+            STD_COLORS[color * 3 + 1],
+            STD_COLORS[color * 3 + 2],
+        ],
+        16..232 => {
+            // color < 6*6*6+16 ?
+            // colors 16-231 (6x6x6 cube):
+            [
+                cube_ansi_256(color, 36),
+                cube_ansi_256(color, 6),
+                cube_ansi_256(color, 1),
+            ]
+        }
+        _ => {
+            // color 232-255 (grayscale):
+            let red = wrap((2056usize + 2570usize * (color - 232usize)) / 256usize);
+            let green = red;
+            let blue = red;
+            [red, green, blue]
+        }
+    }
+}
