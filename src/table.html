@@ -1,0 +1,211 @@
+<table class="s-table">
+<thead>
+<tr>
+<th>Code</th>
+<th>Effect</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Reset / Normal</td>
+<td>all attributes off</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Bold or increased intensity</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Faint (decreased intensity)</td>
+<td>Not widely supported.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Italic</td>
+<td>Not widely supported. Sometimes treated as inverse.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Underline</td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>Slow Blink</td>
+<td>less than 150 per minute</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Rapid Blink</td>
+<td>MS-DOS ANSI.SYS; 150+ per minute; not widely supported</td>
+</tr>
+<tr>
+<td>7</td>
+<td>[[reverse video]]</td>
+<td>swap foreground and background colors</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Conceal</td>
+<td>Not widely supported.</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Crossed-out</td>
+<td>Characters legible, but marked for deletion.  Not widely supported.</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Primary(default) font</td>
+<td></td>
+</tr>
+<tr>
+<td>11–19</td>
+<td>Alternate font</td>
+<td>Select alternate font <code>n-10</code></td>
+</tr>
+<tr>
+<td>20</td>
+<td>Fraktur</td>
+<td>hardly ever supported</td>
+</tr>
+<tr>
+<td>21</td>
+<td>Bold off or Double Underline</td>
+<td>Bold off not widely supported; double underline hardly ever supported.</td>
+</tr>
+<tr>
+<td>22</td>
+<td>Normal color or intensity</td>
+<td>Neither bold nor faint</td>
+</tr>
+<tr>
+<td>23</td>
+<td>Not italic, not Fraktur</td>
+<td></td>
+</tr>
+<tr>
+<td>24</td>
+<td>Underline off</td>
+<td>Not singly or doubly underlined</td>
+</tr>
+<tr>
+<td>25</td>
+<td>Blink off</td>
+<td></td>
+</tr>
+<tr>
+<td>27</td>
+<td>Inverse off</td>
+<td></td>
+</tr>
+<tr>
+<td>28</td>
+<td>Reveal</td>
+<td>conceal off</td>
+</tr>
+<tr>
+<td>29</td>
+<td>Not crossed out</td>
+<td></td>
+</tr>
+<tr>
+<td>30–37</td>
+<td>Set foreground color</td>
+<td>See color table below</td>
+</tr>
+<tr>
+<td>38</td>
+<td>Set foreground color</td>
+<td>Next arguments are <code>5;&lt;n&gt;</code> or <code>2;&lt;r&gt;;&lt;g&gt;;&lt;b&gt;</code>, see below</td>
+</tr>
+<tr>
+<td>39</td>
+<td>Default foreground color</td>
+<td>implementation defined (according to standard)</td>
+</tr>
+<tr>
+<td>40–47</td>
+<td>Set background color</td>
+<td>See color table below</td>
+</tr>
+<tr>
+<td>48</td>
+<td>Set background color</td>
+<td>Next arguments are <code>5;&lt;n&gt;</code> or <code>2;&lt;r&gt;;&lt;g&gt;;&lt;b&gt;</code>, see below</td>
+</tr>
+<tr>
+<td>49</td>
+<td>Default background color</td>
+<td>implementation defined (according to standard)</td>
+</tr>
+<tr>
+<td>51</td>
+<td>Framed</td>
+<td></td>
+</tr>
+<tr>
+<td>52</td>
+<td>Encircled</td>
+<td></td>
+</tr>
+<tr>
+<td>53</td>
+<td>Overlined</td>
+<td></td>
+</tr>
+<tr>
+<td>54</td>
+<td>Not framed or encircled</td>
+<td></td>
+</tr>
+<tr>
+<td>55</td>
+<td>Not overlined</td>
+<td></td>
+</tr>
+<tr>
+<td>60</td>
+<td>ideogram underline</td>
+<td>hardly ever supported</td>
+</tr>
+<tr>
+<td>61</td>
+<td>ideogram double underline</td>
+<td>hardly ever supported</td>
+</tr>
+<tr>
+<td>62</td>
+<td>ideogram overline</td>
+<td>hardly ever supported</td>
+</tr>
+<tr>
+<td>63</td>
+<td>ideogram double overline</td>
+<td>hardly ever supported</td>
+</tr>
+<tr>
+<td>64</td>
+<td>ideogram stress marking</td>
+<td>hardly ever supported</td>
+</tr>
+<tr>
+<td>65</td>
+<td>ideogram attributes off</td>
+<td>reset the effects of all of 60-64</td>
+</tr>
+<tr>
+<td>90–97</td>
+<td>Set bright foreground color</td>
+<td>aixterm (not in standard)</td>
+</tr>
+<tr>
+<td>100–107</td>
+<td>Set bright background color</td>
+<td>aixterm (not in standard)</td>
+</tr>
+</tbody>
+</table>
