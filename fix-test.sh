@@ -30,7 +30,11 @@ expression="${lineno}s/$regex/$replace)/"
 
 1>&2 echo "sed \"${expression}\" -i \"$filename\""
 if 2>fix-test-error.sed sed "${expression}" -i "$filename"; then
-    if cargo test -j1; then
+    post_output=$(2>&1 cargo test -j1 | ack '((thread|[-][-][>]).*[a-z_]+[.]rs|left|right):' | head -3 | sed 's/^[[:space:]]*//g')
+    post_filename=$(echo "$output" | head -1 | sed 's,^.*\?\(thread.*at\|[-][-][>]\)\s*\([a-z_]\+/[a-z_]\+[.]rs\):\([0-9]\+\):.*,\2,g')
+    post_lineno=$(( $(echo "$output" | head -1 | sed 's,^.*\?\(thread.*at\|[-][-][>]\)\s*[a-z_]\+/[a-z_]\+[.]rs:\([0-9]\+\):.*,\2,g') + 0 ))
+
+    if [ "${post_filename}" != "${filename}" ] || [ "${post_lineno}" != "${lineno}" ]; then
         # git diff "$filename"
         git commit "$filename" -m "fix ${filename} line ${lineno}, such that \"${current}\" becomes \"${replace}\""
     else
