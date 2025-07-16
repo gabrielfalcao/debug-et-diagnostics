@@ -118,11 +118,13 @@ case "$1" in
         if 2>"${error_filename}" sed "${expression}" -i "$filename"; then
             if 2>/dev/random cargo test -j1 --test "$test_name"; then
                 rm -f "$error_filename"
-                git add -f "${filename}"
+                git commit "$filename" -m "fix ${filename} line ${lineno}, such that \"${current}\" becomes \"${replace}\""
+                git push
                 expression="${next_lineno}s/^\(\s*\)\/\/\s*\(assert_[a-z_]\+!.*;\)/\1\2/"
                 if 2>"${error_filename}" sed "${expression}" -i "$filename"; then
+                    git commit "$filename" -m "uncomment ${filename} line ${next_lineno} so as to trigger next fix"
+                    git push
                     rm -f "${error_filename}"
-                    git commit "$filename" -m "fix ${filename} line ${lineno}, such that \"${current}\" becomes \"${replace}\""
                     exit 0
                 else
                     # git restore "$filename"
