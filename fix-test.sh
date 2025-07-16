@@ -5,7 +5,7 @@ filename=$(echo "$output" | head -1 | sed 's,^\s*thread.*at\s*\([a-z_]\+/[a-z_]\
 lineno=$(( $(echo "$output" | head -1 | sed 's,^\s*thread.*at\s*[a-z_]\+/[a-z_]\+[.]rs:\([0-9]\+\):.*,\1,g') + 0 ))
 current=$(echo "$output" | tail -1 | sed 's,^.*right:\s*\([[].*[]]\).*$,\1,g')
 replace=$(echo "$output" | tail -2 | head -1 | sed 's,^.*left:\s*\([[].*[]]\).*$,\1,g')
-regex=$(echo -n "${current}" | sed 's/\(.\)/[\1]/g')
+regex=$(echo -n "${current}" | sed 's/\([^a-zA-Z0-9_,.;: -]\)/[\1]/g')
 
 if [ ! -e "$filename" ]; then
     1>&2 echo "ERROR: '${filename}' does not exist"
@@ -17,4 +17,6 @@ if [ $lineno -gt $linecount ]; then
     exit 101
 fi
 
+set -x
 sed "${lineno}s/$regex/$replace/" -i "$filename"
+git diff "$filename"
