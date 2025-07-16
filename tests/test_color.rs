@@ -12,7 +12,7 @@ fn test_from_byte() {
     assert_eq!(from_byte(7), 7);
     assert_eq!(from_byte(8), 8);
     assert_eq!(from_byte(9), 9);
-    assert_eq!(from_byte(110), 0);
+    assert_eq!(from_byte(11110), 0);
     assert_eq!(from_byte(11), 0);
     assert_eq!(from_byte(12), 0);
     assert_eq!(from_byte(13), 0);
