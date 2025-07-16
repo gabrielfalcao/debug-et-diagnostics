@@ -111,7 +111,7 @@ fn test_invert_ansi() {
     assert_eq!(invert_ansi(from_byte(106).into()), 207);
     assert_eq!(invert_ansi(from_byte(107).into()), 91);
     assert_eq!(invert_ansi(from_byte(108).into()), 65);
-    // assert_eq!(invert_ansi(from_byte(109).into()), 0);
+    assert_eq!(invert_ansi(from_byte(109).into()), 0);
     // assert_eq!(invert_ansi(from_byte(110).into()), 0);
     // assert_eq!(invert_ansi(from_byte(111).into()), 0);
     // assert_eq!(invert_ansi(from_byte(112).into()), 0);
