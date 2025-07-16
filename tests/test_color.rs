@@ -20,7 +20,7 @@ fn test_from_byte() {
     assert_eq!(from_byte(15), 255);
     assert_eq!(from_byte(16), 0);
     assert_eq!(from_byte(17), 95);
-    // assert_eq!(from_byte(18), 18);
+    assert_eq!(from_byte(18), 18);
     // assert_eq!(from_byte(19), 19);
     // assert_eq!(from_byte(20), 20);
     // assert_eq!(from_byte(21), 21);
