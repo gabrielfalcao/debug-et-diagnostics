@@ -53,7 +53,7 @@ ensure_next_lines_commented() {
         replace='\1\/\/ \2'
         expression="${next_lineno}s/$regex/$replace/"
         if sed "${expression}" -i "$filename"; then
-            1>&2 echo -e "\r\x1b[A\x1b[1;38;5;231msilenced \x1b[1;38;5;33m${filename}\x1b[1;38;5;231m line \x1b[1;38;5;82m${next_lineno}\x1b[0m"
+            1>&2 echo -e "\r\x1b[A\x1b[1;38;5;231msilenced \x1b[1;38;5;33m${filename}\x1b[1;38;5;231m line \x1b[1;38;5;82m${next_lineno}\x1b[0m\t\t\t\t\t\t\t\t\t"
             next_lineno=$(( $next_lineno + 1 ))
         else
             1>&2 echo -e "\x1b[1;48;5;160m\x1b[1;38;5;231mERROR:\t\x1b[1;48;5;231m\x1b[1;38;5;160m failed to silence \x1b[1;38;5;33m${filename}\x1b[0m\x1b[1;48;5;231m\x1b[1;38;5;16m line \x1b[1;38;5;28m${next_lineno}             \x1b[0m"
