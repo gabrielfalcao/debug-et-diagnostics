@@ -37,8 +37,9 @@ if 2>"${error_filename}" sed "${expression}" -i "$filename"; then
     # post_lineno=$(( $(echo "$output" | head -1 | sed 's,^.*\?\(thread.*at\|[-][-][>]\)\s*[a-z_]\+/[a-z_]\+[.]rs:\([0-9]\+\):.*,\2,g') + 0 ))
 
     if [ "${post_filename}" != "${filename}" ] && [ "${post_lineno}" != "${lineno}" ]; then
-        git diff "$filename"
-        # git commit "$filename" -m "fix ${filename} line ${lineno}, such that \"${current}\" becomes \"${replace}\""
+        # git diff "$filename"
+        rm -f "$error_filename"
+        git commit "$filename" -m "fix ${filename} line ${lineno}, such that \"${current}\" becomes \"${replace}\""
     else
         echo -e "\n\x1b[1;48;5;160m\x1b[1;38;5;231m                                                             \x1b[0m"
         echo -e "\x1b[1;48;5;160m\x1b[1;38;5;231mERROR:\t\x1b[1;48;5;231m\x1b[1;38;5;160mtests failed                                         \x1b[0m"
