@@ -17,7 +17,10 @@ if [ $lineno -gt $linecount ]; then
     exit 101
 fi
 
-set -x
-sed "${lineno}s/$regex/$replace/" -i "$filename"
-#git diff "$filename"
-git commit "$filename" -m "fix ${filename} line ${lineno}: \"${current}\" => \"${replace}\""
+if sed "${lineno}s/$regex/$replace/" -i "$filename"; then
+    #git diff "$filename"
+    git commit "$filename" -m "fix ${filename} line ${lineno}, such that \"${current}\" becomes \"${replace}\""
+else
+    1>&2 echo "failed to fix file \"${filename}\" line ${lineno}"
+    exit 101
+fi
