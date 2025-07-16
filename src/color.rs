@@ -1,4 +1,5 @@
-use std::fmt::Display;
+use std::fmt::{Debug, Display, LowerHex};
+use std::iter::{IntoIterator, Iterator};
 
 const DEFAULT_COLUMNS: usize = 130;
 
@@ -89,7 +90,11 @@ pub fn auto<T: Display>(word: T) -> String {
 }
 /// auto-colorize the underlying bytes of given text with the color determined by [from_bytes]
 pub fn from_display<T: Display>(word: T) -> u8 {
-    from_bytes(word.to_string().as_bytes())
+    from_bytes(format!("{word}").as_bytes())
+}
+/// auto-colorize the underlying bytes of given text with the color determined by [from_bytes]
+pub fn from_debug<T: Debug>(word: T) -> u8 {
+    from_bytes(format!("{word:#?}").as_bytes())
 }
 /// determine a triple of RGB colors of a string determined by [rgb_from_bytes]
 pub fn rgb_from_display<T: Display>(word: T) -> [u8; 3] {
@@ -108,13 +113,20 @@ pub fn from_bytes(bytes: &[u8]) -> u8 {
 /// based on XOR'ing the given slice of bytes;
 pub fn rgb_from_bytes(bytes: &[u8]) -> [u8; 3] {
     let mut color: [u8; 3] = [0, 0, 0];
-    let mut iter = 0;
-    while iter < 3 {
+    if bytes.is_empty() {
+        panic!("rgb_from_bytes called with empty slice");
+    } else if bytes.len() < 3 {
+        let mut expanded_bytes = bytes.to_vec();
+        for index in (bytes.len()-1..bytes.len()) {
+            expanded_bytes.push(bytes[index]);
+        }
+        return rgb_from_bytes(&expanded_bytes)
+    } else {
         for (index, byte) in bytes.iter().enumerate() {
             color[index % 3] ^= *byte
         }
-        iter += 1;
     }
+
     color
 }
 
@@ -277,4 +289,64 @@ pub fn get_ansi_rgb(color: usize) -> [u8; 3] {
             [red, green, blue]
         }
     }
+}
+
+pub fn format_slice_hex<I: IntoIterator<Item: LowerHex>>(items: I, color: bool) -> String {
+    format!(
+        "[{}]",
+        items
+            .into_iter()
+            .map(|el| {
+                let byte = format!("0x{el:02x}");
+                if color {
+                    fore(
+                        byte,
+                        from_byte(
+                            u8::from_str_radix(&format!("{el:02x}"), 16).unwrap_or_default(),
+                                // .unwrap_or_else(|_| from_display(format!("{el:x}"))),
+                        )
+                        .into(),
+                    )
+                } else {
+                    byte
+                }
+            })
+            .collect::<Vec<String>>()
+            .join(", ")
+    )
+}
+
+pub fn format_slice_display<I: IntoIterator<Item: Display>>(items: I, color: bool) -> String {
+    format!(
+        "[{}]",
+        items
+            .into_iter()
+            .map(|el| {
+                let byte = format!("{el}");
+                if color {
+                    fore(byte, from_display(el).into())
+                } else {
+                    byte
+                }
+            })
+            .collect::<Vec<String>>()
+            .join(", ")
+    )
+}
+pub fn format_slice_debug<I: IntoIterator<Item: Debug>>(items: I, color: bool) -> String {
+    format!(
+        "[{}]",
+        items
+            .into_iter()
+            .map(|el| {
+                let byte = format!("{el:#?}");
+                if color {
+                    fore(byte, from_debug(el).into())
+                } else {
+                    byte
+                }
+            })
+            .collect::<Vec<String>>()
+            .join(", ")
+    )
 }

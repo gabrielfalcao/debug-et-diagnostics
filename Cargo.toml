@@ -13,10 +13,17 @@ categories = ["development-tools::debugging"]
 autotests = false
 
 
-[[test]]
-name = "test_color"
-path = "tests/test_color.rs"
+# [[test]]
+# name = "test_color_get_ansi_rgb"
+# path = "./tests/test_color_get_ansi_rgb.rs"
 
 [[test]]
-name = "test_macros"
-path = "tests/test_macros.rs"
+name = "test_color"
+path = "./tests/test_color.rs"
+
+# [[test]]
+# name = "test_macros"
+# path = "tests/test_macros.rs"
+
+[dependencies]
+ansi_colours = "1.2.3"
