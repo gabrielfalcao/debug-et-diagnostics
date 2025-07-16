@@ -245,7 +245,7 @@ use debug_et_diagnostics::{cube_ansi_256, get_ansi_rgb};
 fn test_grayscale() {
     assert_eq!(get_ansi_rgb(233), [18, 18, 18]);
     assert_eq!(get_ansi_rgb(234), [28, 28, 28]);
-    assert_eq!(get_ansi_rgb(235), [235, 235, 235]);
+    assert_eq!(get_ansi_rgb(235), [38, 38, 38]);
     assert_eq!(get_ansi_rgb(236), [236, 236, 236]);
     assert_eq!(get_ansi_rgb(237), [237, 237, 237]);
     assert_eq!(get_ansi_rgb(238), [238, 238, 238]);
