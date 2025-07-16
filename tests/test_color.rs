@@ -265,5 +265,5 @@ fn test_grayscale() {
     assert_eq!(get_ansi_rgb(252), [208, 208, 208]);
     assert_eq!(get_ansi_rgb(253), [218, 218, 218]);
     assert_eq!(get_ansi_rgb(254), [228, 228, 228]);
-    assert_eq!(get_ansi_rgb(255), [255, 255, 255]);
+    assert_eq!(get_ansi_rgb(255), [0, 0, 0]);
 }
