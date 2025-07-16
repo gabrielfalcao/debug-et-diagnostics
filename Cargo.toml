@@ -10,3 +10,13 @@ license = "MIT"
 keywords = ["debug", "macros", "trace"]
 authors = ["Gabriel DeMoura <gabrielteratos@gmail.com>"]
 categories = ["development-tools::debugging"]
+autotests = false
+
+
+[[test]]
+name = "test_color"
+path = "tests/test_color.rs"
+
+# [[test]]
+# name = "test_macros"
+# path = "tests/test_macros.rs"
