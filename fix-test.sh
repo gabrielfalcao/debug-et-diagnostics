@@ -49,10 +49,10 @@ ensure_next_lines_commented() {
     # echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mnext_lineno=\x1b[0m\x1b[1;38;5;33m${ensure_next_lineno}\x1b[0m"
     # exit
     while line_matches_regex ${ensure_next_lineno} '^\s*assert_eq'; do
-        regex='^\(\s\+\)\(assert_eq[!].*;\)\s*$'
-        replace='\1\/\/ \2'
-        expression="${ensure_next_lineno}s/$regex/$replace/"
-        if sed "${expression}" -i "$filename"; then
+        ensure_regex='^\(\s\+\)\(assert_eq[!].*;\)\s*$'
+        ensure_replace='\1\/\/ \2'
+        ensure_expression="${ensure_next_lineno}s/$ensure_regex/$ensure_replace/"
+        if sed "${ensure_expression}" -i "$filename"; then
             1>&2 echo -e "\r\x1b[A\x1b[1;38;5;231msilenced \x1b[1;38;5;33m${filename}\x1b[1;38;5;231m line \x1b[1;38;5;82m${ensure_next_lineno}\x1b[0m\t\t\t\t\t\t\t\t\t"
             ensure_next_lineno=$(( $ensure_next_lineno + 1 ))
         else
@@ -74,7 +74,9 @@ if [ ! -e "$filename" ]; then
 fi
 
 rm -f "${error_filename}"
+set +e
 ensure_next_lines_commented
+set -e
 
 linecount=$(( $(wc -l "$filename" | awk '{ print $1 }') + 0 ))
 if [ $lineno -gt $linecount ]; then
