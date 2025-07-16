@@ -20,11 +20,58 @@ error_filename=fix-test-error.sed
 # echo -e "\x1b[1;48;5;231m\x1b[1;38;5;16mregex=\x1b[0m\x1b[1;38;5;202m${regex}\x1b[0m"
 # exit
 
+line_matches_regex() {
+    line="$1"
+    if [ -z "$line" ]; then
+        1>&2 echo -e "\x1b[1;48;5;160m\x1b[1;38;5;231mERROR:\t\x1b[1;48;5;231m\x1b[1;38;5;160m line_matches_regex received no \"line\" param\x1b[0m"
+        exit 101
+    fi
+    shift
+    regex="$@"
+    if [ -z "$regex" ]; then
+        1>&2 echo -e "\x1b[1;48;5;160m\x1b[1;38;5;231mERROR:\t\x1b[1;48;5;231m\x1b[1;38;5;160m line_matches_regex received no \"regex\" param\x1b[0m"
+        exit 101
+    fi
+    ack --with-filename --column "${regex}" "${filename}" | ack "${filename}:${line}:"
+}
+ensure_next_lines_commented() {
+    next_lineno=$(( $lineno + 1 ))
+    error="false"
+    if line_matches_regex ${next_lineno} '^\s*assert_eq'; then
+        error="false"
+    else
+        error="true"
+    fi
+    # echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mfilename=\x1b[0m\x1b[1;38;5;82m${filename}\x1b[0m"
+    # echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mlineno=\x1b[0m\x1b[1;38;5;71m${lineno}\x1b[0m"
+    # echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16merror=\x1b[0m\x1b[1;38;5;206m${error}\x1b[0m"
+    # echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mnext_lineno=\x1b[0m\x1b[1;38;5;33m${next_lineno}\x1b[0m"
+    # exit
+    while line_matches_regex ${next_lineno} '^\s*assert_eq'; do
+        regex='^\(\s\+\)\(assert_eq[!].*;\)\s*$'
+        replace='\1\/\/ \2'
+        expression="${next_lineno}s/$regex/$replace/"
+        if sed "${expression}" -i "$filename"; then
+            1>&2 echo -e "\x1b[1;38;5;231msilenced \x1b[1;38;5;33m${filename}\x1b[1;38;5;231m line \x1b[1;38;5;82m${next_lineno}\x1b[0m"
+            next_lineno=$(( $next_lineno + 1 ))
+        else
+            1>&2 echo -e "\x1b[1;48;5;160m\x1b[1;38;5;231mERROR:\t\x1b[1;48;5;231m\x1b[1;38;5;160m failed to silence \x1b[1;38;5;33m${filename}\x1b[0m\x1b[1;48;5;231m\x1b[1;38;5;16m line \x1b[1;38;5;28m${next_lineno}             \x1b[0m"
+            error="true"
+            break
+        fi
+    done
+    if [ "${error}" == "false" ]; then
+        git commit "${filename}" -m "silence \"${filename}\" lines $(( $lineno + 1 )) through ${next_lineno}"
+    fi
+}
+
 if [ ! -e "$filename" ]; then
     1>&2 echo "ERROR: '${filename}' does not exist"
     exit 101
 fi
+
 rm -f "${error_filename}"
+ensure_next_lines_commented
 
 linecount=$(( $(wc -l "$filename" | awk '{ print $1 }') + 0 ))
 if [ $lineno -gt $linecount ]; then
