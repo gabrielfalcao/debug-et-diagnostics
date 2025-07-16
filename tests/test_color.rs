@@ -85,7 +85,7 @@ fn test_from_byte() {
     assert_eq!(from_byte(80), 95);
     assert_eq!(from_byte(81), 119);
     assert_eq!(from_byte(82), 160);
-    // assert_eq!(from_byte(83), 83);
+    assert_eq!(from_byte(83), 83);
     // assert_eq!(from_byte(84), 84);
     // assert_eq!(from_byte(85), 85);
     // assert_eq!(from_byte(86), 86);
