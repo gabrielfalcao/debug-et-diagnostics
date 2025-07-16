@@ -59,7 +59,7 @@ ensure_next_lines_commented() {
     ensure_next_lineno=$(( $ensure_next_lineno - 1 ))
     if [ "${error}" == "false" ]; then
         1>&2 echo -e "\r\x1b[A\x1b[1;38;5;231msilenced \x1b[1;38;5;33m${filename}\x1b[1;38;5;231m lines \x1b[1;38;5;220m$(( $lineno + 1 )) through \x1b[1;38;5;48m${ensure_next_lineno}\x1b[0m\t\t\t\t\t\t\t\t\t"
-        git commit "${filename}" -m "silence \"${filename}\" lines $(( $lineno + 1 )) through ${ensure_next_lineno}"
+        # git commit "${filename}" -m "silence \"${filename}\" lines $(( $lineno + 1 )) through ${ensure_next_lineno}"
     fi
 }
 
@@ -90,10 +90,11 @@ if 2>"${error_filename}" sed "${expression}" -i "$filename"; then
     if 2>/dev/random cargo test -j1 --test "$test_name"; then
         # git diff "$filename"
         rm -f "$error_filename"
-        git commit "$filename" -m "fix ${filename} line ${lineno}, such that \"${current}\" becomes \"${replace}\""
+        # # # git commit "$filename" -m "fix ${filename} line ${lineno}, such that \"${current}\" becomes \"${replace}\""
         expression="${next_lineno}s/^\(\s*\)\/\/\s*\(assert_[a-z_]\+!.*;\)/\1\2/"
         if 2>"${error_filename}" sed "${expression}" -i "$filename"; then
             rm -f "${error_filename}"
+            git diff "${filename}"
             exit 0
         else
             git restore "$filename"
