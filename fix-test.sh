@@ -4,7 +4,7 @@ output=$(2>&1 cargo test -j1 | ack '(thread.*[a-z_]+.rs|left|right):' | head -3 
 filename=$(echo "$output" | head -1 | sed 's,^\s*thread.*at\s*\([a-z_]\+/[a-z_]\+[.]rs\):\([0-9]\+\):.*,\1,g')
 lineno=$(( $(echo "$output" | head -1 | sed 's,^\s*thread.*at\s*[a-z_]\+/[a-z_]\+[.]rs:\([0-9]\+\):.*,\1,g') + 0 ))
 current=$(echo "$output" | tail -1 | sed 's,^.*right:\s*\(".*"\).*$,\1,g')
-replace=$(echo "$output" | tail -2 | head -1 | sed 's,^.*left:\s*\(".*"\).*$,\1,g' | sed 's/\\/\\\\/g')
+replace=$(echo "$output" | tail -2 | head -1 | sed 's,^.*left:\s*\(".*"\).*$,\1,g' | sed 's/\\/\\\\/g' | sed 's/\([<>]\)/\\\1/g')
 regex="$(echo -n "${current}" | sed 's/\([^a-zA-Z0-9]\)/[\1]/g')[)]"
 
 # # echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16moutput=\x1b[0m\x1b[1;38;5;202m${output}\x1b[0m"
@@ -27,6 +27,7 @@ if [ $lineno -gt $linecount ]; then
 fi
 
 1>&2 echo "sed \"${lineno}s/$regex/$replace/\" -i \"$filename\""
+exit
 if sed "${lineno}s/$regex/$replace/" -i "$filename"; then
     git diff "$filename"
     # git commit "$filename" -m "fix ${filename} line ${lineno}, such that \"${current}\" becomes \"${replace}\""
