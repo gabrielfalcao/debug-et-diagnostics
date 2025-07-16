@@ -29,7 +29,7 @@ fn test_cube() {
     assert_eq!(get_ansi_rgb(20), [0, 0, 215]);
     assert_eq!(get_ansi_rgb(21), [0, 0, 0]);
     assert_eq!(get_ansi_rgb(22), [0, 95, 0]);
-    assert_eq!(get_ansi_rgb(23), [23, 23, 23]);
+    assert_eq!(get_ansi_rgb(23), [0, 95, 95]);
     assert_eq!(get_ansi_rgb(24), [24, 24, 24]);
     assert_eq!(get_ansi_rgb(25), [25, 25, 25]);
     assert_eq!(get_ansi_rgb(26), [26, 26, 26]);
