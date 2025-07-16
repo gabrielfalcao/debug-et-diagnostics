@@ -18,7 +18,7 @@ fn test_standard() {
     assert_eq!(get_ansi_rgb(13), [255, 0, 255]);
     assert_eq!(get_ansi_rgb(14), [0, 255, 255]);
     assert_eq!(get_ansi_rgb(15), [255, 255, 255]);
-    assert_eq!(get_ansi_rgb(16), [16, 16, 16]);
+    assert_eq!(get_ansi_rgb(16), [0, 0, 0]);
 }
 
 // #[test]
