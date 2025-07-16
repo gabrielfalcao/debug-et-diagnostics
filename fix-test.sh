@@ -35,35 +35,35 @@ line_matches_regex() {
     2>/dev/random ack --with-filename --column "${regex}" "${filename}" | 2>/dev/random 1>/dev/random ack "${filename}:${line}:"
 }
 ensure_next_lines_commented() {
-    next_lineno=$(( $lineno + 1 ))
+    ensure_next_lineno=$(( $lineno + 1 ))
     error="false"
-    if line_matches_regex ${next_lineno} '^\s*assert_eq'; then
+    if line_matches_regex ${ensure_next_lineno} '^\s*assert_eq'; then
         error="false"
-        1>&2 echo -e "\x1b[1;38;5;231mattempt to silence \x1b[1;38;5;33m${filename}\x1b[1;38;5;231m line \x1b[1;38;5;82m${next_lineno}\x1b[0m"
+        1>&2 echo -e "\x1b[1;38;5;231mattempt to silence \x1b[1;38;5;33m${filename}\x1b[1;38;5;231m line \x1b[1;38;5;82m${ensure_next_lineno}\x1b[0m"
     else
         error="true"
     fi
     # echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mfilename=\x1b[0m\x1b[1;38;5;82m${filename}\x1b[0m"
     # echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mlineno=\x1b[0m\x1b[1;38;5;71m${lineno}\x1b[0m"
     # echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16merror=\x1b[0m\x1b[1;38;5;206m${error}\x1b[0m"
-    # echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mnext_lineno=\x1b[0m\x1b[1;38;5;33m${next_lineno}\x1b[0m"
+    # echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mnext_lineno=\x1b[0m\x1b[1;38;5;33m${ensure_next_lineno}\x1b[0m"
     # exit
-    while line_matches_regex ${next_lineno} '^\s*assert_eq'; do
+    while line_matches_regex ${ensure_next_lineno} '^\s*assert_eq'; do
         regex='^\(\s\+\)\(assert_eq[!].*;\)\s*$'
         replace='\1\/\/ \2'
-        expression="${next_lineno}s/$regex/$replace/"
+        expression="${ensure_next_lineno}s/$regex/$replace/"
         if sed "${expression}" -i "$filename"; then
-            1>&2 echo -e "\r\x1b[A\x1b[1;38;5;231msilenced \x1b[1;38;5;33m${filename}\x1b[1;38;5;231m line \x1b[1;38;5;82m${next_lineno}\x1b[0m\t\t\t\t\t\t\t\t\t"
-            next_lineno=$(( $next_lineno + 1 ))
+            1>&2 echo -e "\r\x1b[A\x1b[1;38;5;231msilenced \x1b[1;38;5;33m${filename}\x1b[1;38;5;231m line \x1b[1;38;5;82m${ensure_next_lineno}\x1b[0m\t\t\t\t\t\t\t\t\t"
+            ensure_next_lineno=$(( $ensure_next_lineno + 1 ))
         else
-            1>&2 echo -e "\x1b[1;48;5;160m\x1b[1;38;5;231mERROR:\t\x1b[1;48;5;231m\x1b[1;38;5;160m failed to silence \x1b[1;38;5;33m${filename}\x1b[0m\x1b[1;48;5;231m\x1b[1;38;5;16m line \x1b[1;38;5;28m${next_lineno}             \x1b[0m\t\t\t\t\t\t\t\t\t"
+            1>&2 echo -e "\x1b[1;48;5;160m\x1b[1;38;5;231mERROR:\t\x1b[1;48;5;231m\x1b[1;38;5;160m failed to silence \x1b[1;38;5;33m${filename}\x1b[0m\x1b[1;48;5;231m\x1b[1;38;5;16m line \x1b[1;38;5;28m${ensure_next_lineno}             \x1b[0m\t\t\t\t\t\t\t\t\t"
             error="true"
             break
         fi
     done
     if [ "${error}" == "false" ]; then
-        1>&2 echo -e "\r\x1b[A\x1b[1;38;5;231msilenced \x1b[1;38;5;33m${filename}\x1b[1;38;5;231m lines \x1b[1;38;5;220m$(( $lineno + 1 )) through \x1b[1;38;5;48m${next_lineno}\x1b[0m\t\t\t\t\t\t\t\t\t"
-        git commit "${filename}" -m "silence \"${filename}\" lines $(( $lineno + 1 )) through ${next_lineno}"
+        1>&2 echo -e "\r\x1b[A\x1b[1;38;5;231msilenced \x1b[1;38;5;33m${filename}\x1b[1;38;5;231m lines \x1b[1;38;5;220m$(( $lineno + 1 )) through \x1b[1;38;5;48m${ensure_next_lineno}\x1b[0m\t\t\t\t\t\t\t\t\t"
+        git commit "${filename}" -m "silence \"${filename}\" lines $(( $lineno + 1 )) through ${ensure_next_lineno}"
     fi
 }
 
