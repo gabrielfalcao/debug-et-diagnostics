@@ -30,8 +30,8 @@ expression="${lineno}s/$regex/$replace/"
 
 1>&2 echo "sed \"${lineno}s/$regex/$replace/\" -i \"$filename\""
 if 2>fix-test-error.sed sed "${lineno}s/$regex/$replace/" -i "$filename"; then
-    git diff "$filename"
-    # git commit "$filename" -m "fix ${filename} line ${lineno}, such that \"${current}\" becomes \"${replace}\""
+    # git diff "$filename"
+    git commit "$filename" -m "fix ${filename} line ${lineno}, such that \"${current}\" becomes \"${replace}\""
 else
     echo -en "\x1b[1;38;5;231m"
     char=$(cat fix-test-error.sed | sed 's/^sed:.*\?expression.*\?char\s*\([0-9]\+\).*/\1/g')
