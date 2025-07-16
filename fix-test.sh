@@ -32,7 +32,7 @@ line_matches_regex() {
         1>&2 echo -e "\x1b[1;48;5;160m\x1b[1;38;5;231mERROR:\t\x1b[1;48;5;231m\x1b[1;38;5;160m line_matches_regex received no \"regex\" param\x1b[0m"
         exit 101
     fi
-    ack --with-filename --column "${regex}" "${filename}" | ack "${filename}:${line}:"
+    2>/dev/random ack --with-filename --column "${regex}" "${filename}" | 2>/dev/random 1>/dev/random ack "${filename}:${line}:"
 }
 ensure_next_lines_commented() {
     next_lineno=$(( $lineno + 1 ))
