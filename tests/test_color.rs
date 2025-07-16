@@ -25,7 +25,7 @@ use debug_et_diagnostics::{cube_ansi_256, get_ansi_rgb};
 fn test_cube() {
     assert_eq!(get_ansi_rgb(17), [0, 0, 95]);
     assert_eq!(get_ansi_rgb(18), [0, 0, 135]);
-    assert_eq!(get_ansi_rgb(19), [19, 19, 19]);
+    assert_eq!(get_ansi_rgb(19), [0, 0, 175]);
     assert_eq!(get_ansi_rgb(20), [20, 20, 20]);
     assert_eq!(get_ansi_rgb(21), [21, 21, 21]);
     assert_eq!(get_ansi_rgb(22), [22, 22, 22]);
