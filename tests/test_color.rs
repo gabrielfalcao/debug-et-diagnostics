@@ -4,7 +4,7 @@ use debug_et_diagnostics::{invert_ansi, from_byte};
 fn test_invert_ansi() {
     assert_eq!(invert_ansi(from_byte(0).into()), 231);
     assert_eq!(invert_ansi(from_byte(1).into()), 35);
-    // assert_eq!(invert_ansi(from_byte(2).into()), 0);
+    assert_eq!(invert_ansi(from_byte(2).into()), 0);
     // assert_eq!(invert_ansi(from_byte(3).into()), 0);
     // assert_eq!(invert_ansi(from_byte(4).into()), 0);
     // assert_eq!(invert_ansi(from_byte(5).into()), 0);
