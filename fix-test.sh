@@ -5,11 +5,6 @@ test_name="test_color"
 output=$(2>&1 cargo test -j1 --test "$test_name" | ack '((thread|[-][-][>]).*[a-z_]+[.]rs|left|right):' | head -3 | sed 's/^[[:space:]]*//g')
 filename=$(echo "$output" | head -1 | sed 's,^.*\?\(thread.*at\|[-][-][>]\)\s*\([a-z_]\+/[a-z_]\+[.]rs\):\([0-9]\+\):.*,\2,g')
 lineno=$(( $(echo "$output" | head -1 | sed 's,^.*\?\(thread.*at\|[-][-][>]\)\s*[a-z_]\+/[a-z_]\+[.]rs:\([0-9]\+\):.*,\2,g') + 0 ))
-next_lineno=$(( $lineno + 1 ))
-current=$(echo "$output" | tail -1 | sed 's,^.*right:\s*\([0-9]\+\).*$,\1,g')
-replace=$(echo "$output" | tail -2 | head -1 | sed 's,^.*left:\s*\([0-9]\+\).*$,\1,g' | sed 's/\\/\\\\/g' | sed 's/\([<>/]\)/\\\1/g')
-regex="$(echo -n "${current}" | sed 's/\([^a-zA-Z0-9]\)/[\1]/g')[)][;]"
-replace="${replace});"
 # # # # echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16moutput=\x1b[0m\x1b[1;38;5;202m${output}\x1b[0m"
 # # # # exit
 error_filename=fix-test-error.sed
@@ -77,6 +72,11 @@ rm -f "${error_filename}"
 set +e
 ensure_next_lines_commented
 set -e
+next_lineno=$(( $lineno + 1 ))
+current=$(echo "$output" | tail -1 | sed 's,^.*right:\s*\([0-9]\+\).*$,\1,g')
+replace=$(echo "$output" | tail -2 | head -1 | sed 's,^.*left:\s*\([0-9]\+\).*$,\1,g' | sed 's/\\/\\\\/g' | sed 's/\([<>/]\)/\\\1/g')
+regex="$(echo -n "${current}" | sed 's/\([^a-zA-Z0-9]\)/[\1]/g')[)][;]"
+replace="${replace});"
 
 linecount=$(( $(wc -l "$filename" | awk '{ print $1 }') + 0 ))
 if [ $lineno -gt $linecount ]; then
