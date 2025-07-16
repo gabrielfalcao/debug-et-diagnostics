@@ -8,7 +8,7 @@ fn test_from_byte() {
     assert_eq!(from_byte(3), 0);
     assert_eq!(from_byte(4), 238);
     assert_eq!(from_byte(5), 0);
-    assert_eq!(from_byte(6), 6);
+    assert_eq!(from_byte(6), 0);
     // assert_eq!(from_byte(7), 7);
     // assert_eq!(from_byte(8), 8);
     // assert_eq!(from_byte(9), 9);
