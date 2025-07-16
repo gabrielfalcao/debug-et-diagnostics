@@ -56,12 +56,13 @@ ensure_next_lines_commented() {
             1>&2 echo -e "\r\x1b[A\x1b[1;38;5;231msilenced \x1b[1;38;5;33m${filename}\x1b[1;38;5;231m line \x1b[1;38;5;82m${next_lineno}\x1b[0m\t\t\t\t\t\t\t\t\t"
             next_lineno=$(( $next_lineno + 1 ))
         else
-            1>&2 echo -e "\x1b[1;48;5;160m\x1b[1;38;5;231mERROR:\t\x1b[1;48;5;231m\x1b[1;38;5;160m failed to silence \x1b[1;38;5;33m${filename}\x1b[0m\x1b[1;48;5;231m\x1b[1;38;5;16m line \x1b[1;38;5;28m${next_lineno}             \x1b[0m"
+            1>&2 echo -e "\x1b[1;48;5;160m\x1b[1;38;5;231mERROR:\t\x1b[1;48;5;231m\x1b[1;38;5;160m failed to silence \x1b[1;38;5;33m${filename}\x1b[0m\x1b[1;48;5;231m\x1b[1;38;5;16m line \x1b[1;38;5;28m${next_lineno}             \x1b[0m\t\t\t\t\t\t\t\t\t"
             error="true"
             break
         fi
     done
     if [ "${error}" == "false" ]; then
+        1>&2 echo -e "\r\x1b[A\x1b[1;38;5;231msilenced \x1b[1;38;5;33m${filename}\x1b[1;38;5;231m lines \x1b[1;38;5;220m$(( $lineno + 1 )) through \x1b[1;38;5;48m${next_lineno}\x1b[0m\t\t\t\t\t\t\t\t\t"
         git commit "${filename}" -m "silence \"${filename}\" lines $(( $lineno + 1 )) through ${next_lineno}"
     fi
 }
