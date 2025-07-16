@@ -1,6 +1,6 @@
+use ansi_colours::rgb_from_ansi256;
 use std::fmt::{Debug, Display, LowerHex};
 use std::iter::{IntoIterator, Iterator};
-
 const DEFAULT_COLUMNS: usize = 130;
 
 /// reset the ANSI colors of the given test
@@ -112,22 +112,32 @@ pub fn from_bytes(bytes: &[u8]) -> u8 {
 /// simple and naive algorithm to determine a triple of RGB colors
 /// based on XOR'ing the given slice of bytes;
 pub fn rgb_from_bytes(bytes: &[u8]) -> [u8; 3] {
-    let mut color: [u8; 3] = [0, 0, 0];
-    if bytes.is_empty() {
-        panic!("rgb_from_bytes called with empty slice");
-    } else if bytes.len() < 3 {
-        let mut expanded_bytes = bytes.to_vec();
-        for index in (bytes.len()-1..bytes.len()) {
-            expanded_bytes.push(bytes[index]);
-        }
-        return rgb_from_bytes(&expanded_bytes)
-    } else {
-        for (index, byte) in bytes.iter().enumerate() {
-            color[index % 3] ^= *byte
+    merge_rgb(bytes.into_iter().map(|byte| rgb_from_byte(*byte)), false)
+}
+/// returns a `[red, green, blue]` slice `[u8; 3]` from a single byte
+pub fn rgb_from_byte(byte: u8) -> [u8; 3] {
+    let tuple = rgb_from_ansi256(byte);
+    [tuple.0, tuple.1, tuple.2]
+}
+/// merges a sequence of slice `[u8; 3]` into a single slice `[u8; 3]`
+pub fn merge_rgb<I: IntoIterator<Item = [u8; 3]> + Clone>(rgbs: I, extra: bool) -> [u8; 3] {
+    let mut result = [0u8; 3];
+    for rgb in rgbs.clone().into_iter() {
+        result[0] ^= rgb[0];
+        result[1] ^= rgb[1];
+        result[2] ^= rgb[2];
+    }
+    if extra {
+        for triple in rgbs.clone().into_iter() {
+            for byte in triple.into_iter() {
+                let rgb = rgb_from_byte(byte);
+                result[0] ^= rgb[0];
+                result[1] ^= rgb[1];
+                result[2] ^= rgb[2];
+            }
         }
     }
-
-    color
+    result
 }
 
 /// returns a tuple of (foreground, backrground) color by taking one
@@ -303,7 +313,7 @@ pub fn format_slice_hex<I: IntoIterator<Item: LowerHex>>(items: I, color: bool) 
                         byte,
                         from_byte(
                             u8::from_str_radix(&format!("{el:02x}"), 16).unwrap_or_default(),
-                                // .unwrap_or_else(|_| from_display(format!("{el:x}"))),
+                            // .unwrap_or_else(|_| from_display(format!("{el:x}"))),
                         )
                         .into(),
                     )
