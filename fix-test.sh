@@ -34,14 +34,14 @@ line_matches_regex() {
     fi
     2>/dev/random ack --with-filename --column "${regex}" "${filename}" | 2>/dev/random 1>/dev/random ack "${filename}:${line}:"
 }
+
 ensure_next_lines_commented() {
     ensure_next_lineno=$(( $lineno + 1 ))
     error="false"
     if line_matches_regex ${ensure_next_lineno} '^\s*assert_eq'; then
-        error="false"
         1>&2 echo -e "\x1b[1;38;5;231mattempt to silence \x1b[1;38;5;33m${filename}\x1b[1;38;5;231m line \x1b[1;38;5;82m${ensure_next_lineno}\x1b[0m"
     else
-        error="true"
+        return
     fi
     # echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mfilename=\x1b[0m\x1b[1;38;5;82m${filename}\x1b[0m"
     # echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mlineno=\x1b[0m\x1b[1;38;5;71m${lineno}\x1b[0m"
@@ -61,6 +61,7 @@ ensure_next_lines_commented() {
             break
         fi
     done
+    ensure_next_lineno=$(( $ensure_next_lineno - 1 ))
     if [ "${error}" == "false" ]; then
         1>&2 echo -e "\r\x1b[A\x1b[1;38;5;231msilenced \x1b[1;38;5;33m${filename}\x1b[1;38;5;231m lines \x1b[1;38;5;220m$(( $lineno + 1 )) through \x1b[1;38;5;48m${ensure_next_lineno}\x1b[0m\t\t\t\t\t\t\t\t\t"
         git commit "${filename}" -m "silence \"${filename}\" lines $(( $lineno + 1 )) through ${ensure_next_lineno}"
