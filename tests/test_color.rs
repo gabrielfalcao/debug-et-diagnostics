@@ -104,7 +104,7 @@ fn test_cube() {
     assert_eq!(get_ansi_rgb(95), [135, 95, 95]);
     assert_eq!(get_ansi_rgb(96), [135, 95, 135]);
     assert_eq!(get_ansi_rgb(97), [135, 95, 175]);
-    assert_eq!(get_ansi_rgb(98), [98, 98, 98]);
+    assert_eq!(get_ansi_rgb(98), [135, 95, 215]);
     assert_eq!(get_ansi_rgb(99), [99, 99, 99]);
     assert_eq!(get_ansi_rgb(100), [100, 100, 100]);
     assert_eq!(get_ansi_rgb(101), [101, 101, 101]);
