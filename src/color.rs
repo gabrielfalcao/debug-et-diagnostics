@@ -1,4 +1,4 @@
-use ansi_colours::rgb_from_ansi256;
+use ansi_colours::{ansi256_from_rgb, rgb_from_ansi256};
 use std::fmt::{Debug, Display, LowerHex};
 use std::iter::{IntoIterator, Iterator};
 const DEFAULT_COLUMNS: usize = 130;
@@ -119,6 +119,11 @@ pub fn rgb_from_byte(byte: u8) -> [u8; 3] {
     let tuple = rgb_from_ansi256(byte);
     [tuple.0, tuple.1, tuple.2]
 }
+
+/// returns a `[red, green, blue]` slice `[u8; 3]` from a single byte
+pub fn rgb_to_byte(rgb: [u8; 3]) -> u8 {
+    ansi256_from_rgb(rgb)
+}
 /// merges a sequence of slice `[u8; 3]` into a single slice `[u8; 3]`
 pub fn merge_rgb<I: IntoIterator<Item = [u8; 3]> + Clone>(rgbs: I, extra: bool) -> [u8; 3] {
     let mut result = [0u8; 3];
@@ -148,6 +153,16 @@ pub fn couple(color: usize) -> (u8, u8) {
     let fore = bright(wrap(color));
     let back = invert_bw(fore);
     (fore, back)
+}
+
+/// converts the given color to rgb triple then inverts the rgb and converts back to ansi256
+pub fn invert_ansi(color: usize) -> u8 {
+    rgb_to_byte(invert_rgb(rgb_from_byte(wrap(color))))
+}
+
+/// converts the given color to rgb triple then inverts the rgb and converts back to ansi256
+pub fn invert_rgb(color: [u8; 3]) -> [u8; 3] {
+    [255u8 - color[0], 255u8 - color[1], 255u8 - color[2]]
 }
 
 /// naive heuristic to return the brightest opposite of the given color.
