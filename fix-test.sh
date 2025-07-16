@@ -26,12 +26,20 @@ if [ $lineno -gt $linecount ]; then
     exit 101
 fi
 
-expression="${lineno}s/$regex/$replace/"
+expression="${lineno}s/$regex/$replace)/"
 
-1>&2 echo "sed \"${lineno}s/$regex/$replace/\" -i \"$filename\""
-if 2>fix-test-error.sed sed "${lineno}s/$regex/$replace/" -i "$filename"; then
-    # git diff "$filename"
-    git commit "$filename" -m "fix ${filename} line ${lineno}, such that \"${current}\" becomes \"${replace}\""
+1>&2 echo "sed \"${expression}\" -i \"$filename\""
+if 2>fix-test-error.sed sed "${expression}" -i "$filename"; then
+    if cargo test -j1; then
+        # git diff "$filename"
+        git commit "$filename" -m "fix ${filename} line ${lineno}, such that \"${current}\" becomes \"${replace}\""
+    else
+        echo -e "\n\x1b[1;48;5;160m\x1b[1;38;5;231m                                                             \x1b[0m"
+        echo -e "\x1b[1;48;5;160m\x1b[1;38;5;231mERROR:\t\x1b[1;48;5;231m\x1b[1;38;5;160mtests failed                                         \x1b[0m"
+        echo -e "\x1b[0m\x1b[1;48;5;231m\x1b[1;38;5;16mtry manually fixing \x1b[1;38;5;33m${filename}\x1b[0m\x1b[1;48;5;231m\x1b[1;38;5;16m line \x1b[1;38;5;28m${lineno}             \x1b[0m"
+        echo -e "\x1b[1;48;5;160m\x1b[1;38;5;231m                                                             \x1b[0m"
+        exit 101
+    fi
 else
     echo -en "\x1b[1;38;5;231m"
     char=$(cat fix-test-error.sed | sed 's/^sed:.*\?expression.*\?char\s*\([0-9]\+\).*/\1/g')

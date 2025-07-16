@@ -25,7 +25,7 @@ fn test_tag_close() {
 #[test]
 fn test_tag_wrap() {
     assert_eq!(tag!(@wrap, "tag", "text"), "\u{1b}[1;48;5;16m\u{1b}[1;38;5;7m<\u{1b}[0m\u{1b}[1;48;5;16m\u{1b}[1;38;5;7mtag\u{1b}[0m\u{1b}[1;48;5;16m\u{1b}[1;38;5;7m>\u{1b}[0m\n    \u{1b}[1;48;5;16m\u{1b}[1;38;5;7mtext\u{1b}[0m\n\u{1b}[1;48;5;16m\u{1b}[1;38;5;7m</\u{1b}[0m\u{1b}[1;48;5;16m\u{1b}[1;38;5;7mtag\u{1b}[0m\u{1b}[1;48;5;16m\u{1b}[1;38;5;7m>\u{1b}[0m");
-    assert_eq!(tag!(@wrap, "tag", "text", 220), "");
+    assert_eq!(tag!(@wrap, "tag", "text", 220), "\u{1b}[1;48;5;16m\u{1b}[1;38;5;220m<\u{1b}[0m\u{1b}[1;48;5;16m\u{1b}[1;38;5;220mtag\u{1b}[0m\u{1b}[1;48;5;16m\u{1b}[1;38;5;220m>\u{1b}[0m\n    \u{1b}[1;48;5;16m\u{1b}[1;38;5;220mtext\u{1b}[0m\n\u{1b}[1;48;5;16m\u{1b}[1;38;5;220m</\u{1b}[0m\u{1b}[1;48;5;16m\u{1b}[1;38;5;220mtag\u{1b}[0m\u{1b}[1;48;5;16m\u{1b}[1;38;5;220m>\u{1b}[0m");
     assert_eq!(tag!(@wrap, "tag", "text", @color=auto), "");
     assert_eq!(tag!(@wrap, "tag", "text", @color=fore), "");
     assert_eq!(tag!(@wrap, "tag", "text", @color=220), "");
