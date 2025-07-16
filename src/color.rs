@@ -90,7 +90,66 @@ pub fn auto<T: Display>(word: T) -> String {
 }
 /// auto-colorize the underlying bytes of given text with the color determined by [from_bytes]
 pub fn from_display<T: Display>(word: T) -> u8 {
-    from_bytes(format!("{word}").as_bytes())
+    let string = format!("{word}");
+    from_bytes(
+        &u8::from_str_radix(&string, 10)
+            .ok()
+            .or_else(|| u8::from_str_radix(&string, 16).ok())
+            .map(|byte| vec![byte])
+            .or_else(|| {
+                if string.to_lowercase().starts_with("0x") {
+                    u8::from_str_radix(string.to_lowercase().replacen("0x", "", 1).as_str(), 16)
+                        .map(|byte| vec![byte])
+                        .ok()
+                } else {
+                    None
+                }
+            })
+            .map(|byte| vec![byte].into_iter().flatten().collect::<Vec<u8>>())
+            .or_else(|| {
+                u16::from_str_radix(&string, 16)
+                    .map(|u| u.to_ne_bytes().to_vec())
+                    .ok()
+            })
+            .or_else(|| {
+                if string.to_lowercase().starts_with("0x") {
+                    u16::from_str_radix(string.to_lowercase().replacen("0x", "", 1).as_str(), 16)
+                        .map(|u| u.to_ne_bytes().to_vec())
+                        .ok()
+                } else {
+                    None
+                }
+            })
+            .or_else(|| {
+                u32::from_str_radix(&string, 16)
+                    .ok()
+                    .map(|u| u.to_ne_bytes().to_vec())
+            })
+            .or_else(|| {
+                if string.to_lowercase().starts_with("0x") {
+                    u32::from_str_radix(string.to_lowercase().replacen("0x", "", 1).as_str(), 16)
+                        .map(|u| u.to_ne_bytes().to_vec())
+                        .ok()
+                } else {
+                    None
+                }
+            })
+            .or_else(|| {
+                u64::from_str_radix(&string, 16)
+                    .ok()
+                    .map(|u| u.to_ne_bytes().to_vec())
+            })
+            .or_else(|| {
+                if string.to_lowercase().starts_with("0x") {
+                    u64::from_str_radix(string.to_lowercase().replacen("0x", "", 1).as_str(), 16)
+                        .map(|u| u.to_ne_bytes().to_vec())
+                        .ok()
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_else(|| string.as_bytes().to_vec()),
+    )
 }
 /// auto-colorize the underlying bytes of given text with the color determined by [from_bytes]
 pub fn from_debug<T: Debug>(word: T) -> u8 {
