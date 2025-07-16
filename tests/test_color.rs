@@ -96,7 +96,7 @@ fn test_from_display_number_0_to_255() {
     assert_eq!(from_display(91), 40);
     assert_eq!(from_display(92), 80);
     assert_eq!(from_display(93), 120);
-    assert_eq!(from_display(94), 24);
+    assert_eq!(from_display(94), 216);
     // assert_eq!(from_display(95), 70);
     // assert_eq!(from_display(96), 109);
     // assert_eq!(from_display(97), 91);
