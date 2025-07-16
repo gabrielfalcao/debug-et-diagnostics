@@ -3,7 +3,7 @@ use debug_et_diagnostics::{from_display};
 #[test]
 fn test_from_display_number_0_to_255() {
     assert_eq!(from_display(0), 0);
-    // assert_eq!(from_display(1), 35);
+    assert_eq!(from_display(1), 35);
     // assert_eq!(from_display(2), 35);
     // assert_eq!(from_display(3), 231);
     // assert_eq!(from_display(4), 250);
