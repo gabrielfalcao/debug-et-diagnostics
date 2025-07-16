@@ -5,6 +5,13 @@ test_name="test_color"
 output=$(2>&1 cargo test -j1 --test "$test_name" | ack '((thread|[-][-][>]).*[a-z_]+[.]rs|left|right):' | head -3 | sed 's/^[[:space:]]*//g')
 filename=$(echo "$output" | head -1 | sed 's,^.*\?\(thread.*at\|[-][-][>]\)\s*\([a-z_]\+/[a-z_]\+[.]rs\):\([0-9]\+\):.*,\2,g')
 lineno=$(( $(echo "$output" | head -1 | sed 's,^.*\?\(thread.*at\|[-][-][>]\)\s*[a-z_]\+/[a-z_]\+[.]rs:\([0-9]\+\):.*,\2,g') + 0 ))
+next_lineno=$(( $lineno + 1 ))
+current=$(echo "$output" | tail -1 | sed 's,^.*right:\s*\([0-9]\+\).*$,\1,g')
+replace=$(echo "$output" | tail -2 | head -1 | sed 's,^.*left:\s*\([0-9]\+\).*$,\1,g' | sed 's/\\/\\\\/g' | sed 's/\([<>/]\)/\\\1/g')
+regex="$(echo -n "${current}" | sed 's/\([^a-zA-Z0-9]\)/[\1]/g')[)][;]"
+replace="${replace});"
+current="${current});"
+
 # # # # echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16moutput=\x1b[0m\x1b[1;38;5;202m${output}\x1b[0m"
 # # # # exit
 error_filename=fix-test-error.sed
@@ -59,7 +66,7 @@ ensure_next_lines_commented() {
     ensure_next_lineno=$(( $ensure_next_lineno - 1 ))
     if [ "${error}" == "false" ]; then
         1>&2 echo -e "\r\x1b[A\x1b[1;38;5;231msilenced \x1b[1;38;5;33m${filename}\x1b[1;38;5;231m lines \x1b[1;38;5;220m$(( $lineno + 1 )) through \x1b[1;38;5;48m${ensure_next_lineno}\x1b[0m\t\t\t\t\t\t\t\t\t"
-        # git commit "${filename}" -m "silence \"${filename}\" lines $(( $lineno + 1 )) through ${ensure_next_lineno}"
+        git commit "${filename}" -m "silence \"${filename}\" lines $(( $lineno + 1 )) through ${ensure_next_lineno}"
     fi
 }
 
@@ -86,6 +93,7 @@ fix_once() {
     replace=$(echo "$output" | tail -2 | head -1 | sed 's,^.*left:\s*\([0-9]\+\).*$,\1,g' | sed 's/\\/\\\\/g' | sed 's/\([<>/]\)/\\\1/g')
     regex="$(echo -n "${current}" | sed 's/\([^a-zA-Z0-9]\)/[\1]/g')[)][;]"
     replace="${replace});"
+    current="${current});"
 
     linecount=$(( $(wc -l "$filename" | awk '{ print $1 }') + 0 ))
     if [ $lineno -gt $linecount ]; then
@@ -97,13 +105,11 @@ fix_once() {
     1>&2 echo "sed \"${expression}\" -i \"$filename\""
     if 2>"${error_filename}" sed "${expression}" -i "$filename"; then
         if 2>/dev/random cargo test -j1 --test "$test_name"; then
-            # git diff "$filename"
             rm -f "$error_filename"
             git commit "$filename" -m "fix ${filename} line ${lineno}, such that \"${current}\" becomes \"${replace}\""
             expression="${next_lineno}s/^\(\s*\)\/\/\s*\(assert_[a-z_]\+!.*;\)/\1\2/"
             if 2>"${error_filename}" sed "${expression}" -i "$filename"; then
                 rm -f "${error_filename}"
-                git diff "${filename}"
                 exit 0
             else
                 git restore "$filename"
@@ -136,7 +142,8 @@ fix_once() {
 case "$1" in
     'auto'|'--auto')
         while fix_once; do
-            fix_once; done
+            fix_once;
+        done
         ;;
     *)
         fix_once
