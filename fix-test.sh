@@ -19,4 +19,5 @@ fi
 
 set -x
 sed "${lineno}s/$regex/$replace/" -i "$filename"
-git diff "$filename"
+#git diff "$filename"
+git commit "$filename" -m "fix ${filename} line ${lineno}: \"${current}\" => \"${replace}\""
