@@ -17,17 +17,17 @@ autotests = false
 # name = "test_color_get_ansi_rgb"
 # path = "./tests/test_color_get_ansi_rgb.rs"
 
+[[test]]
+name = "test_color"
+path = "./tests/test_color.rs"
+
 # [[test]]
-# name = "test_color"
-# path = "./tests/test_color.rs"
+# name = "test_color_from_byte"
+# path = "./tests/test_color_from_byte.rs"
 
-[[test]]
-name = "test_color_from_byte"
-path = "./tests/test_color_from_byte.rs"
-
-[[test]]
-name = "test_color_from_bytes"
-path = "./tests/test_color_from_bytes.rs"
+# [[test]]
+# name = "test_color_from_bytes"
+# path = "./tests/test_color_from_bytes.rs"
 
 # [[test]]
 # name = "test_macros"
