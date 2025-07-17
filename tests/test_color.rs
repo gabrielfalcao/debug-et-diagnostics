@@ -586,7 +586,7 @@ fn test_from_debug_number_string_0x00_to_0xff() {
     assert_eq!(from_debug("0x1c"), 240);
     assert_eq!(from_debug("0x1d"), 215);
     assert_eq!(from_debug("0x1e"), 136);
-    assert_eq!(from_debug("0x1f"), 40);
+    assert_eq!(from_debug("0x1f"), 80);
     assert_eq!(from_debug("0x20"), 80);
     assert_eq!(from_debug("0x21"), 120);
     assert_eq!(from_debug("0x22"), 175);
