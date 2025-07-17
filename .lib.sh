@@ -244,9 +244,8 @@ banner() {
     msg_start=$(make_indent $bar_2nd_half_end )
     msg_end=$(make_indent $(( $bar_2nd_half_end - $half_msg_width )) )
     bar ${fg}
-
-    1>&2 echo -e "\x1b[1;48;5;${fg}m\x1b[1;38;5;${bg}m${panic_start}\x1b[1;48;5;${fg}m\x1b[1;38;5;${bg}m${title}\x1b[1;48;5;${fg}m${panic_end}"
-    1>&2 echo -e "\x1b[1;48;5;${bg}m\x1b[1;38;5;${fg}m${msg_start}${msg}${msg_end}"
+    bar_text_center ${fg} ${bg} "${title}"
+    bar_text_center ${bg} ${fg} "${msg}"
     bar ${fg}
     exit 101
 }

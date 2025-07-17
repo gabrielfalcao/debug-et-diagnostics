@@ -1,3 +1,4 @@
 /target
 
 *.sed
+.*.sed

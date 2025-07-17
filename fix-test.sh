@@ -8,11 +8,12 @@ working_dir="$(cd "$(dirname "${this_script}")" && pwd)"
 script_name="$(basename "${this_script}")"
 source "${working_dir}/.lib.sh"
 cd "${working_dir}"
-set -eu
+set -e
 
 
-test_name="test_color_get_ansi_rgb"
+test_name="test_macros"
 test_filename="tests/${test_name}.rs"
+
 output=$(2>&1 cargo test -j1 --test "$test_name" | ack '(thread.*[a-z_]+[.]rs|left|right):' | head -4 | sed 's/^[[:space:]]*//g')
 filename=$(echo "$output" | head -1 | sed 's,^.*\?\(thread.*at\)\s*\([a-z_]\+/[a-z_]\+[.]rs\):\([0-9]\+\):.*,\2,g')
 if [ "$filename" != "$test_filename" ]; then
@@ -131,7 +132,7 @@ case "${1:-once}" in
         regex="$(echo -n "${current}" | sed 's/\([^a-zA-Z0-9]\)/[\1]/g')[)][;]"
         replace="${replace});"
         current="${current});"
-        error_filename="${test_name}.fix-test-error.sed"
+        error_filename=".${test_name}.fix-test-error.sed"
         linecount=$(( $(wc -l "$filename" | awk '{ print $1 }') + 0 ))
         rm -f "${error_filename}"
 

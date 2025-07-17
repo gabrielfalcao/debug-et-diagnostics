@@ -367,7 +367,7 @@ macro_rules! step {
         $crate::step!(length=$crate::color::term_cols(), $text)
     }};
     (fg=$fg:expr, $text:expr $(,)?) => {{
-        $crate::step!(bg=$fg, fg=$crate::color::invert_bw($fg), length=$crate::color::term_cols(), $text)
+        $crate::step!(bg=$fg, fg=$crate::color::invert_ansi($fg), length=$crate::color::term_cols(), $text)
     }};
     (bg=$bg:expr, fg=$fg:expr, $text:expr $(,)?) => {{
         $crate::step!(bg=$bg, fg=$fg, length=$crate::color::term_cols(), $text)
@@ -434,11 +434,11 @@ macro_rules! step_dbg {
         $crate::step_dbg!(bg=$bg, fg=$fg, length=$crate::color::term_cols(), $($arg),*)
     }};
     (fg=$fg:expr, $($arg:expr),* $(,)?) => {{
-        $crate::step_dbg!(bg=$fg, fg=$crate::color::invert_bw($fg), length=$crate::color::term_cols(), $($arg),*)
+        $crate::step_dbg!(bg=$fg, fg=$crate::color::invert_ansi($fg), length=$crate::color::term_cols(), $($arg),*)
     }};
     ($($arg:expr),* $(,)?) => {{
         let fg=$crate::color::wrap(line!() as usize);
-        $crate::step_dbg!(bg=fg, fg=$crate::color::invert_bw(fg), length=$crate::color::term_cols(), $($arg),*)
+        $crate::step_dbg!(bg=fg, fg=$crate::color::invert_ansi(fg), length=$crate::color::term_cols(), $($arg),*)
     }};
     () => {{
         $crate::step!("")
@@ -465,13 +465,13 @@ macro_rules! admonition {
             [
                 color::ansi(
                     format!("{}:{} {}", crate::function_name!(), line!(), $title),
-                    color::invert_bw($color).into(),
+                    color::invert_ansi($color).into(),
                     $color,
                 ),
                 color::ansi(
                     format!($format, $($arg),*),
                     $color,
-                    color::invert_bw($color).into(),
+                    color::invert_ansi($color).into(),
                 )
             ]
             .join(" ")
@@ -484,13 +484,13 @@ macro_rules! admonition {
             [
                 color::ansi(
                     format!("{}:{}", crate::function_name!(), line!()),
-                    color::invert_bw($color).into(),
+                    color::invert_ansi($color).into(),
                     $color,
                 ),
                 color::ansi(
                     format!($format, $($arg),*),
                     $color,
-                    color::invert_bw($color).into(),
+                    color::invert_ansi($color).into(),
                 )
             ]
             .join(" ")

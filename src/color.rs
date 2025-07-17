@@ -209,14 +209,18 @@ pub fn merge_rgb<I: IntoIterator<Item = [u8; 3]> + Clone>(rgbs: I, extra: bool) 
 /// foreground color then uses [invert_bw] to
 /// determine the background color.
 pub fn couple(color: usize) -> (u8, u8) {
-    let fore = bright(wrap(color));
-    let back = invert_bw(fore);
+    let fore = bright(color);
+    let back = invert_bw(fore as usize);
     (fore, back)
 }
 
 /// converts the given color to rgb triple then inverts the rgb and converts back to ansi256
 pub fn invert_ansi(color: usize) -> u8 {
-    rgb_to_byte(invert_rgb(rgb_from_byte(wrap(color))))
+    if is_dark_rgb_band(color) {
+        bright(rgb_to_byte(invert_rgb(rgb_from_byte(wrap(color)))) as usize)
+    } else {
+        dark(rgb_to_byte(invert_rgb(rgb_from_byte(wrap(color)))) as usize)
+    }
 }
 
 /// converts the given color to rgb triple then inverts the rgb and converts back to ansi256
@@ -225,27 +229,77 @@ pub fn invert_rgb(color: [u8; 3]) -> [u8; 3] {
 }
 
 /// naive heuristic to return the brightest opposite of the given color.
-pub fn invert_bw(color: u8) -> u8 {
+pub fn invert_bw(color: usize) -> u8 {
     match color {
         0 | 8 | 16..21 | 52..61 | 88..93 | 232..239 => 231,
         _ => 16,
     }
 }
-/// naive heuristic to return a brighter color near the given one.
-pub fn bright(color: u8) -> u8 {
-    match color {
-        0 | 8 => color + 100,
-        16..21 => color + 100,
-        52..61 => color + 40,
-        88..93 => color + 50,
-        232..239 => 249,
-        _ => color,
+
+/// return true if the given rgb band is bright
+pub fn is_bright_rgb_band(color: usize) -> bool {
+    let color = wrap(color);
+    color >= 0x75
+}
+/// return a brighter color from the given rgb band
+pub fn bright_rgb_band(color: usize) -> u8 {
+    if !is_bright_rgb_band(color) {
+        0xff - wrap(color)
+    } else {
+        wrap(color)
     }
+}
+/// return a brighter color near the given one via [bright_rgb_band].
+pub fn bright(color: usize) -> u8 {
+    let color = wrap(color);
+    let [r, g, b] = rgb_from_byte(color);
+    rgb_to_byte([
+        bright_rgb_band(r as usize),
+        bright_rgb_band(g as usize),
+        bright_rgb_band(b as usize),
+    ])
+}
+/// return true if the given rgb band is dark
+pub fn is_dark_rgb_band(color: usize) -> bool {
+    let color = wrap(color);
+    color <= 0x75
+}
+/// return a darker color from the given rgb band
+pub fn dark_rgb_band(color: usize) -> u8 {
+    let color = wrap(color);
+    if !is_dark_rgb_band(color as usize) {
+        color - ((color / 4) * 3)
+    } else {
+        color
+    }
+}
+/// return a darker color near the given one via [dark_rgb_band].
+pub fn dark(color: usize) -> u8 {
+    let color = wrap(color);
+    let [r, g, b] = rgb_from_byte(color);
+    rgb_to_byte([
+        dark_rgb_band(r as usize),
+        dark_rgb_band(g as usize),
+        dark_rgb_band(b as usize),
+    ])
 }
 
 /// wraps the given usize via remainder
 pub fn wrap(color: usize) -> u8 {
-    (if color > 0 { color % 255 } else { color }) as u8
+    let wrapped = (if color > 0 { color % 255 } else { color }) as u8;
+    if invert_bw(wrapped as usize) == 231 {
+        from_bytes(&non_zero_be_bytes(color))
+    } else {
+        wrapped
+    }
+}
+
+pub fn non_zero_be_bytes(color: usize) -> Vec<u8> {
+    let mut bytes = color.to_be_bytes().to_vec();
+    while bytes.len() > 1 && bytes[0] == 0 {
+        bytes.remove(0);
+    }
+    bytes
 }
 
 /// naive function for unix terminals that calls stty to determine the
