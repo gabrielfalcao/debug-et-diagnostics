@@ -14,7 +14,7 @@ fn test_standard() {
     assert_get_ansi_rgb!(9, [255, 0, 0]);
     assert_get_ansi_rgb!(10, [0, 255, 0]);
     assert_get_ansi_rgb!(11, [255, 255, 0]);
-    assert_get_ansi_rgb!(12, [0, 0, 255]);
+    assert_get_ansi_rgb!(12, [92, 92, 255]);
     assert_get_ansi_rgb!(13, [255, 0, 255]);
     assert_get_ansi_rgb!(14, [0, 255, 255]);
     assert_get_ansi_rgb!(15, [255, 255, 255]);
