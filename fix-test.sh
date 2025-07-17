@@ -20,22 +20,22 @@ if [ "$filename" != "$test_filename" ]; then
 fi
 lineno=$(( $(echo "$output" | ack "${filename}" | tail -1 | sed 's,^.*\?\(thread.*at\)\s*[a-z_]\+/[a-z_]\+[.]rs:\([0-9]\+\):.*,\2,g') + 0 ))
 next_lineno=$(( $lineno + 1 ))
-current=$(echo "$output" | ack -v "${filename}" | tail -1 | sed 's,^.*right:\s*\([0-9]\+\|"[^"]\+"\|[[][^]*[]]\).*$,\1,g')
-replace=$(echo "$output" | ack -v "${filename}" | head -1 | sed 's,^.*left:\s*\([0-9]\+\|"[^"]\+"\|[[][^]*[]]\).*$,\1,g' | sed 's/\\/\\\\/g' | sed 's/\([<>/]\)/\\\1/g')
+current=$(echo "$output" | ack -v "${filename}" | grep right | head -1 | sed 's,^.*right:\s*,,g')
+replace=$(echo "$output" | ack -v "${filename}" | grep left | head -1 | sed 's,^.*left:\s*,,g' | sed 's/\\/\\\\/g' | sed 's/\([<>/]\)/\\\1/g')
 regex="$(echo -n "${current}" | sed 's/\([^a-zA-Z0-9]\)/[\1]/g')[)][;]"
 replace="${replace});"
 current="${current});"
 
 # # # echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16moutput=\x1b[0m\x1b[1;38;5;202m${output}\x1b[0m"
-# # # echo "$output" | ack -v "${filename}"
-# # # exit
-# # # # # # exit
-echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mfilename=\x1b[0m\x1b[1;38;5;82m${filename}\x1b[0m"
-echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mlineno=\x1b[0m\x1b[1;38;5;71m${lineno}\x1b[0m"
-echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mcurrent=\x1b[0m\x1b[1;38;5;206m${current}\x1b[0m"
-echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mreplace=\x1b[0m\x1b[1;38;5;33m${replace}\x1b[0m"
-echo -e "\x1b[1;48;5;231m\x1b[1;38;5;16mregex=\x1b[0m\x1b[1;38;5;202m${regex}\x1b[0m"
-exit
+# # echo "$output" | ack -v "${filename}"
+# # exit
+# # # # # # # exit
+# echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mfilename=\x1b[0m\x1b[1;38;5;82m${filename}\x1b[0m"
+# echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mlineno=\x1b[0m\x1b[1;38;5;71m${lineno}\x1b[0m"
+# echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mcurrent=\x1b[0m\x1b[1;38;5;206m${current}\x1b[0m"
+# echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mreplace=\x1b[0m\x1b[1;38;5;33m${replace}\x1b[0m"
+# echo -e "\x1b[1;48;5;231m\x1b[1;38;5;16mregex=\x1b[0m\x1b[1;38;5;202m${regex}\x1b[0m"
+# exit
 
 line_matches_regex() {
     line="$1"
@@ -126,8 +126,8 @@ case "${1:-once}" in
         fi
         lineno=$(( $(echo "$output" | ack "${filename}" | tail -1 | sed 's,^.*\?\(thread.*at\)\s*[a-z_]\+/[a-z_]\+[.]rs:\([0-9]\+\):.*,\2,g') + 0 ))
         next_lineno=$(( $lineno + 1 ))
-        current=$(echo "$output" | ack -v "${filename}" | tail -1 | sed 's,^.*right:\s*\([0-9]\+\|"[^"\+]"\|[[][^]*[]]\).*$,\1,g')
-        replace=$(echo "$output" | ack -v "${filename}" | head -1 | sed 's,^.*left:\s*\([0-9]\+\|"[^"\+]"\|[[][^]*[]]\).*$,\1,g' | sed 's/\\/\\\\/g' | sed 's/\([<>/]\)/\\\1/g')
+        current=$(echo "$output" | ack -v "${filename}" | grep right | head -1 | sed 's,^.*right:\s*,,g')
+        replace=$(echo "$output" | ack -v "${filename}" | grep left | head -1 | sed 's,^.*left:\s*,,g' | sed 's/\\/\\\\/g' | sed 's/\([<>/]\)/\\\1/g')
         regex="$(echo -n "${current}" | sed 's/\([^a-zA-Z0-9]\)/[\1]/g')[)][;]"
         replace="${replace});"
         current="${current});"
