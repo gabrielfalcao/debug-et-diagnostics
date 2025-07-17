@@ -34,7 +34,7 @@ use debug_et_diagnostics::{from_debug};
 fn test_from_debug_number_0_to_255() {
     assert_eq!(from_debug(0), 120);
     assert_eq!(from_debug(1), 80);
-    // assert_eq!(from_debug(2), 205);
+    assert_eq!(from_debug(2), 205);
     // assert_eq!(from_debug(3), 0);
     // assert_eq!(from_debug(4), 238);
     // assert_eq!(from_debug(5), 0);
