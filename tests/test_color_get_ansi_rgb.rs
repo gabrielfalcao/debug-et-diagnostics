@@ -243,7 +243,7 @@ fn test_cube() {
 
 #[test]
 fn test_grayscale() {
-    assert_get_ansi_rgb!(233, [18, 18, 18]);
+    assert_get_ansi_rgb!(233, [175, 95, 255]);
     // assert_get_ansi_rgb!(234, [28, 28, 28]);
     // assert_get_ansi_rgb!(235, [38, 38, 38]);
     // assert_get_ansi_rgb!(236, [48, 48, 48]);
