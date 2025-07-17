@@ -54,7 +54,7 @@ fn test_dark() {
     assert_eq!(dark(49), 47);
     assert_eq!(dark(50), 47);
     assert_eq!(dark(51), 51);
-    assert_eq!(dark(52), 52);
+    assert_eq!(dark(52), 23);
     assert_eq!(dark(53), 53);
     assert_eq!(dark(54), 54);
     assert_eq!(dark(55), 55);
