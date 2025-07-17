@@ -54,7 +54,7 @@ fn test_cube() {
     assert_get_ansi_rgb!(45, [0, 215, 255]);
     assert_get_ansi_rgb!(46, [0, 255, 0]);
     assert_get_ansi_rgb!(47, [0, 255, 95]);
-    assert_get_ansi_rgb!(48, [0, 0, 135]);
+    assert_get_ansi_rgb!(48, [0, 255, 135]);
     assert_get_ansi_rgb!(49, [0, 0, 175]);
     assert_get_ansi_rgb!(50, [0, 0, 215]);
     assert_get_ansi_rgb!(51, [0, 0, 0]);
