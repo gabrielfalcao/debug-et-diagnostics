@@ -3,7 +3,7 @@ use debug_et_diagnostics::{from_debug};
 #[test]
 fn test_from_debug_letter_A_to_Z() {
     assert_eq!(from_debug("A"), 135);
-    assert_eq!(from_debug("B"), 0);
+    assert_eq!(from_debug("B"), 95);
     // assert_eq!(from_debug("C"), 255);
     // assert_eq!(from_debug("D"), 0);
     // assert_eq!(from_debug("E"), 0);
