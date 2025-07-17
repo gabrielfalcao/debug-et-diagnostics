@@ -7,7 +7,7 @@ fn test_from_debug_letter_A_to_Z() {
     assert_eq!(from_debug("C"), 119);
     assert_eq!(from_debug("D"), 15);
     assert_eq!(from_debug("E"), 39);
-    // assert_eq!(from_debug("F"), 255);
+    assert_eq!(from_debug("F"), 255);
     // assert_eq!(from_debug("G"), 175);
     // assert_eq!(from_debug("H"), 119);
     // assert_eq!(from_debug("I"), 95);
