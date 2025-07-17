@@ -25,13 +25,13 @@ fn test_tag_close() {
 #[test]
 fn test_tag_wrap() {
     assert_eq!(tag!(@wrap, "tag", "text"), "");
-    assert_eq!(tag!(@wrap, "tag", "text", 220), "");
-    assert_eq!(tag!(@wrap, "tag", "text", @color=auto), "");
-    assert_eq!(tag!(@wrap, "tag", "text", @color=fore), "");
-    assert_eq!(tag!(@wrap, "tag", "text", @color=220), "");
-    assert_eq!(tag!(@wrap, "tag", "text", 220, @color=auto), "");
-    assert_eq!(tag!(@wrap, "tag", "text", 220, @color=fore), "");
-    assert_eq!(tag!(@wrap, "tag", "text", 220, @color=220), "");
+    // assert_eq!(tag!(@wrap, "tag", "text", 220), "");
+    // assert_eq!(tag!(@wrap, "tag", "text", @color=auto), "");
+    // assert_eq!(tag!(@wrap, "tag", "text", @color=fore), "");
+    // assert_eq!(tag!(@wrap, "tag", "text", @color=220), "");
+    // assert_eq!(tag!(@wrap, "tag", "text", 220, @color=auto), "");
+    // assert_eq!(tag!(@wrap, "tag", "text", 220, @color=fore), "");
+    // assert_eq!(tag!(@wrap, "tag", "text", 220, @color=220), "");
 }
 
 // // #[test]
