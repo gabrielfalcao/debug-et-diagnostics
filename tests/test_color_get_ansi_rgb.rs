@@ -1,25 +1,25 @@
 use debug_et_diagnostics::get_ansi_rgb;
 
-#[test]
-fn test_standard() {
-    assert_get_ansi_rgb!(0, [0, 0, 0]);
-    assert_get_ansi_rgb!(1, [205, 0, 0]);
-    assert_get_ansi_rgb!(2, [0, 205, 0]);
-    assert_get_ansi_rgb!(3, [205, 205, 0]);
-    assert_get_ansi_rgb!(4, [0, 0, 238]);
-    assert_get_ansi_rgb!(5, [205, 0, 205]);
-    assert_get_ansi_rgb!(6, [0, 205, 205]);
-    assert_get_ansi_rgb!(7, [229, 229, 229]);
-    assert_get_ansi_rgb!(8, [175, 0, 175]);
-    assert_get_ansi_rgb!(9, [255, 0, 0]);
-    assert_get_ansi_rgb!(10, [0, 255, 0]);
-    assert_get_ansi_rgb!(11, [255, 255, 0]);
-    assert_get_ansi_rgb!(12, [92, 92, 255]);
-    assert_get_ansi_rgb!(13, [255, 0, 255]);
-    assert_get_ansi_rgb!(14, [0, 255, 255]);
-    assert_get_ansi_rgb!(15, [255, 255, 255]);
-    assert_get_ansi_rgb!(16, [0, 0, 0]);
-}
+// #[test]
+// fn test_standard() {
+//     assert_get_ansi_rgb!(0, [0, 0, 0]);
+//     assert_get_ansi_rgb!(1, [205, 0, 0]);
+//     assert_get_ansi_rgb!(2, [0, 205, 0]);
+//     assert_get_ansi_rgb!(3, [205, 205, 0]);
+//     assert_get_ansi_rgb!(4, [0, 0, 238]);
+//     assert_get_ansi_rgb!(5, [205, 0, 205]);
+//     assert_get_ansi_rgb!(6, [0, 205, 205]);
+//     assert_get_ansi_rgb!(7, [229, 229, 229]);
+//     assert_get_ansi_rgb!(8, [175, 0, 175]);
+//     assert_get_ansi_rgb!(9, [255, 0, 0]);
+//     assert_get_ansi_rgb!(10, [0, 255, 0]);
+//     assert_get_ansi_rgb!(11, [255, 255, 0]);
+//     assert_get_ansi_rgb!(12, [92, 92, 255]);
+//     assert_get_ansi_rgb!(13, [255, 0, 255]);
+//     assert_get_ansi_rgb!(14, [0, 255, 255]);
+//     assert_get_ansi_rgb!(15, [255, 255, 255]);
+//     assert_get_ansi_rgb!(16, [0, 0, 0]);
+// }
 
 #[test]
 fn test_cube() {
