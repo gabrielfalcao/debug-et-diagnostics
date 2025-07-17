@@ -276,7 +276,6 @@ macro_rules! assert_get_ansi_rgb {
         $(,)?
     ) => {{
         let ansi = wrap($ansi as usize);
-        use ansi_colours::rgb_from_ansi256;
         use debug_et_diagnostics::{wrap, format_slice_display};
         assert_eq!(get_ansi_rgb(ansi as usize), $expected_slice, "expected get_ansi_rgb({ansi}) to equal {}", format_slice_display($expected_slice, true));
         // let tuple = rgb_from_ansi256(ansi);

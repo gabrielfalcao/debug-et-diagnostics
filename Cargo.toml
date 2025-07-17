@@ -18,12 +18,24 @@ name = "test_color_get_ansi_rgb"
 path = "./tests/test_color_get_ansi_rgb.rs"
 
 [[test]]
-name = "test_color"
-path = "./tests/test_color.rs"
+name = "test_color_bright"
+path = "./tests/test_color_bright.rs"
+
+[[test]]
+name = "test_color_dark"
+path = "./tests/test_color_dark.rs"
 
 [[test]]
 name = "test_color_from_byte"
 path = "./tests/test_color_from_byte.rs"
+
+[[test]]
+name = "test_color_from_display"
+path = "./tests/test_color_from_display.rs"
+
+[[test]]
+name = "test_color_from_debug"
+path = "./tests/test_color_from_debug.rs"
 
 [[test]]
 name = "test_color_from_bytes"
