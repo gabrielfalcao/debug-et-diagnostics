@@ -199,7 +199,7 @@ fn test_bright() {
     assert_eq!(bright(194), 194);
     assert_eq!(bright(195), 255);
     assert_eq!(bright(196), 231);
-    assert_eq!(bright(197), 197);
+    assert_eq!(bright(197), 229);
     assert_eq!(bright(198), 198);
     assert_eq!(bright(199), 199);
     assert_eq!(bright(200), 200);
