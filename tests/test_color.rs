@@ -18,7 +18,7 @@ fn test_from_display_letter_A_to_Z() {
     assert_eq!(from_display("N"), 15);
     assert_eq!(from_display("O"), 39);
     assert_eq!(from_display("P"), 95);
-    assert_eq!(from_display("Q"), 0);
+    assert_eq!(from_display("Q"), 119);
     // assert_eq!(from_display("R"), 0);
     // assert_eq!(from_display("S"), 0);
     // assert_eq!(from_display("T"), 0);
