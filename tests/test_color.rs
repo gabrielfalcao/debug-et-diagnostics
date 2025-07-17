@@ -79,7 +79,7 @@ fn test_from_debug_number_0_to_255() {
     assert_eq!(from_debug(44), 0);
     assert_eq!(from_debug(45), 95);
     assert_eq!(from_debug(46), 135);
-    assert_eq!(from_debug(47), 160);
+    assert_eq!(from_debug(47), 175);
     assert_eq!(from_debug(48), 120);
     assert_eq!(from_debug(49), 80);
     assert_eq!(from_debug(50), 40);
