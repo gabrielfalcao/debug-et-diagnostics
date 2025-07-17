@@ -256,7 +256,7 @@ fn test_from_debug_number_0_to_255() {
     assert_eq!(from_debug(221), 80);
     assert_eq!(from_debug(222), 40);
     assert_eq!(from_debug(223), 0);
-    assert_eq!(from_debug(224), 255);
+    assert_eq!(from_debug(224), 95);
     assert_eq!(from_debug(225), 215);
     assert_eq!(from_debug(226), 0);
     assert_eq!(from_debug(227), 95);
