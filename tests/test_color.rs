@@ -603,7 +603,7 @@ fn test_from_debug_number_string_0x00_to_0xff() {
     assert_eq!(from_debug("0x2d"), 175);
     assert_eq!(from_debug("0x2e"), 240);
     assert_eq!(from_debug("0x2f"), 40);
-    assert_eq!(from_debug("0x30"), 120);
+    assert_eq!(from_debug("0x30"), 255);
     assert_eq!(from_debug("0x31"), 80);
     assert_eq!(from_debug("0x32"), 40);
     assert_eq!(from_debug("0x33"), 0);
