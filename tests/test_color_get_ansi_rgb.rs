@@ -10,7 +10,7 @@ fn test_standard() {
     assert_get_ansi_rgb!(5, [205, 0, 205]);
     assert_get_ansi_rgb!(6, [0, 205, 205]);
     assert_get_ansi_rgb!(7, [229, 229, 229]);
-    // assert_get_ansi_rgb!(8, [128, 128, 128]);
+    assert_get_ansi_rgb!(8, [128, 128, 128]);
     // assert_get_ansi_rgb!(9, [255, 0, 0]);
     // assert_get_ansi_rgb!(10, [255, 255, 0]);
     // assert_get_ansi_rgb!(11, [0, 255, 0]);
