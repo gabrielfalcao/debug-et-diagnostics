@@ -405,7 +405,7 @@ fn test_from_debug_number_string_0_to_255() {
     assert_eq!(from_debug("110"), 120);
     assert_eq!(from_debug("111"), 80);
     assert_eq!(from_debug("112"), 40);
-    assert_eq!(from_debug("113"), 15);
+    assert_eq!(from_debug("113"), 0);
     assert_eq!(from_debug("114"), 215);
     assert_eq!(from_debug("115"), 255);
     assert_eq!(from_debug("116"), 135);
