@@ -22,7 +22,7 @@ fn test_bright() {
     assert_eq!(bright(17), 247);
     assert_eq!(bright(18), 147);
     assert_eq!(bright(19), 175);
-    assert_eq!(bright(20), 20);
+    assert_eq!(bright(20), 217);
     assert_eq!(bright(21), 21);
     assert_eq!(bright(22), 22);
     assert_eq!(bright(23), 23);
