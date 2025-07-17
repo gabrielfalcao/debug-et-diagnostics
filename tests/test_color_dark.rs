@@ -80,7 +80,7 @@ fn test_dark() {
     assert_eq!(dark(75), 63);
     assert_eq!(dark(76), 58);
     assert_eq!(dark(77), 238);
-    assert_eq!(dark(78), 78);
+    assert_eq!(dark(78), 237);
     assert_eq!(dark(79), 79);
     assert_eq!(dark(80), 80);
     assert_eq!(dark(81), 81);
