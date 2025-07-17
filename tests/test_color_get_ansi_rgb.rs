@@ -5,7 +5,7 @@ fn test_standard() {
     assert_get_ansi_rgb!(0, [0, 0, 0]);
     assert_get_ansi_rgb!(1, [205, 0, 0]);
     assert_get_ansi_rgb!(2, [0, 205, 0]);
-    // assert_get_ansi_rgb!(3, [128, 128, 0]);
+    assert_get_ansi_rgb!(3, [128, 128, 0]);
     // assert_get_ansi_rgb!(4, [0, 0, 128]);
     // assert_get_ansi_rgb!(5, [128, 0, 128]);
     // assert_get_ansi_rgb!(6, [0, 128, 128]);
