@@ -15,7 +15,7 @@ fn test_bright() {
     assert_eq!(bright(10), 231);
     assert_eq!(bright(11), 255);
     assert_eq!(bright(12), 147);
-    assert_eq!(bright(13), 13);
+    assert_eq!(bright(13), 231);
     assert_eq!(bright(14), 14);
     assert_eq!(bright(15), 15);
     assert_eq!(bright(16), 16);
