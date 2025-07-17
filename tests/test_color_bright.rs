@@ -4,7 +4,7 @@ use debug_et_diagnostics::{bright};
 fn test_bright() {
     assert_eq!(bright(0), 231);
     assert_eq!(bright(1), 195);
-    assert_eq!(bright(2), 2);
+    assert_eq!(bright(2), 225);
     assert_eq!(bright(3), 3);
     assert_eq!(bright(4), 4);
     assert_eq!(bright(5), 5);
