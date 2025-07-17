@@ -27,7 +27,7 @@ fn test_from_display_letter_A_to_Z() {
     assert_eq!(from_display("W"), 95);
     assert_eq!(from_display("X"), 135);
     assert_eq!(from_display("Y"), 216);
-    // assert_eq!(from_display("Z"), 0);
+    assert_eq!(from_display("Z"), 0);
 }
 
 // #[test]
