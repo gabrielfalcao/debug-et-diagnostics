@@ -204,7 +204,7 @@ fn test_cube() {
     assert_get_ansi_rgb!(195, [215, 255, 255]);
     assert_get_ansi_rgb!(196, [255, 0, 0]);
     assert_get_ansi_rgb!(197, [255, 0, 95]);
-    assert_get_ansi_rgb!(198, [0, 0, 135]);
+    assert_get_ansi_rgb!(198, [255, 0, 135]);
     assert_get_ansi_rgb!(199, [0, 0, 175]);
     assert_get_ansi_rgb!(200, [0, 0, 215]);
     assert_get_ansi_rgb!(201, [0, 0, 0]);
