@@ -12,7 +12,7 @@ fn test_from_display_letter_A_to_Z() {
     assert_eq!(from_display("H"), 119);
     assert_eq!(from_display("I"), 95);
     assert_eq!(from_display("J"), 39);
-    assert_eq!(from_display("K"), 0);
+    assert_eq!(from_display("K"), 15);
     // assert_eq!(from_display("L"), 0);
     // assert_eq!(from_display("M"), 0);
     // assert_eq!(from_display("N"), 0);
