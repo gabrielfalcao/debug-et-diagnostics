@@ -13,25 +13,25 @@ categories = ["development-tools::debugging"]
 autotests = false
 
 
-# [[test]]
-# name = "test_color_get_ansi_rgb"
-# path = "./tests/test_color_get_ansi_rgb.rs"
+[[test]]
+name = "test_color_get_ansi_rgb"
+path = "./tests/test_color_get_ansi_rgb.rs"
 
 [[test]]
 name = "test_color"
 path = "./tests/test_color.rs"
 
-# [[test]]
-# name = "test_color_from_byte"
-# path = "./tests/test_color_from_byte.rs"
+[[test]]
+name = "test_color_from_byte"
+path = "./tests/test_color_from_byte.rs"
 
-# [[test]]
-# name = "test_color_from_bytes"
-# path = "./tests/test_color_from_bytes.rs"
+[[test]]
+name = "test_color_from_bytes"
+path = "./tests/test_color_from_bytes.rs"
 
-# [[test]]
-# name = "test_macros"
-# path = "tests/test_macros.rs"
+[[test]]
+name = "test_macros"
+path = "tests/test_macros.rs"
 
 [dependencies]
 ansi_colours = "1.2.3"
