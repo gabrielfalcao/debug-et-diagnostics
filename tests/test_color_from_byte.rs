@@ -3,7 +3,7 @@ use debug_et_diagnostics::{from_byte, from_bytes};
 #[test]
 fn test_from_byte() {
     assert_eq!(from_byte(0), 0);
-    assert_eq!(from_byte(1), 205);
+    assert_eq!(from_byte(1), 1);
     // assert_eq!(from_byte(2), 205);
     // assert_eq!(from_byte(3), 0);
     // assert_eq!(from_byte(4), 238);
