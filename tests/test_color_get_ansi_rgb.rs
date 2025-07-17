@@ -3,7 +3,7 @@ use debug_et_diagnostics::get_ansi_rgb;
 #[test]
 fn test_standard() {
     assert_get_ansi_rgb!(0, [0, 0, 0]);
-    assert_get_ansi_rgb!(1, [128, 0, 0]);
+    assert_get_ansi_rgb!(1, [205, 0, 0]);
     // assert_get_ansi_rgb!(2, [0, 128, 0]);
     // assert_get_ansi_rgb!(3, [128, 128, 0]);
     // assert_get_ansi_rgb!(4, [0, 0, 128]);
@@ -275,18 +275,18 @@ macro_rules! assert_get_ansi_rgb {
         $expected_slice:expr
         $(,)?
     ) => {{
-        let ansi = $ansi;
+        let ansi = wrap($ansi as usize);
         use ansi_colours::rgb_from_ansi256;
-        use debug_et_diagnostics::format_slice_hex;
-        assert_eq!(get_ansi_rgb($ansi), $expected_slice);
-        let tuple = rgb_from_ansi256($ansi);
+        use debug_et_diagnostics::{format_slice_hex, wrap, format_slice_display};
+        assert_eq!(get_ansi_rgb(ansi as usize), $expected_slice, "expected get_ansi_rgb({ansi}) to equal {}", format_slice_display($expected_slice, true));
+        let tuple = rgb_from_ansi256(ansi);
         let ansi_colours_slice = [tuple.0, tuple.1, tuple.2];
         assert_eq!(
             ansi_colours_slice,
             $expected_slice,
             "expected rgb_from_ansi256({ansi}) to equal {} but got {}",
-            format_slice_hex($expected_slice, true),
-            format_slice_hex(ansi_colours_slice, true)
+            format_slice_display($expected_slice, true),
+            format_slice_display(ansi_colours_slice, true)
         );
     }};
 }
