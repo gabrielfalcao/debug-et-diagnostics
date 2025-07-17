@@ -1,36 +1,46 @@
 #!/usr/bin/env bash
-set -e
+export IFS="
+"
+
+
 this_script="${BASH_SOURCE[0]}"
 working_dir="$(cd "$(dirname "${this_script}")" && pwd)"
 script_name="$(basename "${this_script}")"
+source "${working_dir}/.lib.sh"
 cd "${working_dir}"
+set -eu
 
-test_name="test_color"
 
-output=$(2>&1 cargo test -j1 --test "$test_name" | ack '((thread|[-][-][>]).*[a-z_]+[.]rs|left|right):' | head -3 | sed 's/^[[:space:]]*//g')
-filename=$(echo "$output" | head -1 | sed 's,^.*\?\(thread.*at\|[-][-][>]\)\s*\([a-z_]\+/[a-z_]\+[.]rs\):\([0-9]\+\):.*,\2,g')
-lineno=$(( $(echo "$output" | head -1 | sed 's,^.*\?\(thread.*at\|[-][-][>]\)\s*[a-z_]\+/[a-z_]\+[.]rs:\([0-9]\+\):.*,\2,g') + 0 ))
+test_name="test_color_get_ansi_rgb"
+test_filename="tests/${test_name}.rs"
+output=$(2>&1 cargo test -j1 --test "$test_name" | ack '(thread.*[a-z_]+[.]rs|left|right):' | head -4 | sed 's/^[[:space:]]*//g')
+filename=$(echo "$output" | head -1 | sed 's,^.*\?\(thread.*at\)\s*\([a-z_]\+/[a-z_]\+[.]rs\):\([0-9]\+\):.*,\2,g')
+if [ "$filename" != "$test_filename" ]; then
+    panic "expected filename in test output to be '${test_filename}' instead of '${filename}'"
+fi
+lineno=$(( $(echo "$output" | ack "${filename}" | tail -1 | sed 's,^.*\?\(thread.*at\)\s*[a-z_]\+/[a-z_]\+[.]rs:\([0-9]\+\):.*,\2,g') + 0 ))
 next_lineno=$(( $lineno + 1 ))
-current=$(echo "$output" | tail -1 | sed 's,^.*right:\s*\([0-9]\+\).*$,\1,g')
-replace=$(echo "$output" | tail -2 | head -1 | sed 's,^.*left:\s*\([0-9]\+\).*$,\1,g' | sed 's/\\/\\\\/g' | sed 's/\([<>/]\)/\\\1/g')
+current=$(echo "$output" | ack -v "${filename}" | tail -1 | sed 's,^.*right:\s*\([0-9]\+\|"[^"]\+"\|[[][^]*[]]\).*$,\1,g')
+replace=$(echo "$output" | ack -v "${filename}" | head -1 | sed 's,^.*left:\s*\([0-9]\+\|"[^"]\+"\|[[][^]*[]]\).*$,\1,g' | sed 's/\\/\\\\/g' | sed 's/\([<>/]\)/\\\1/g')
 regex="$(echo -n "${current}" | sed 's/\([^a-zA-Z0-9]\)/[\1]/g')[)][;]"
 replace="${replace});"
 current="${current});"
 
-# # # # echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16moutput=\x1b[0m\x1b[1;38;5;202m${output}\x1b[0m"
-# # # # exit
-error_filename=fix-test-error.sed
-# echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mfilename=\x1b[0m\x1b[1;38;5;82m${filename}\x1b[0m"
-# echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mlineno=\x1b[0m\x1b[1;38;5;71m${lineno}\x1b[0m"
-# echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mcurrent=\x1b[0m\x1b[1;38;5;206m${current}\x1b[0m"
-# echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mreplace=\x1b[0m\x1b[1;38;5;33m${replace}\x1b[0m"
-# echo -e "\x1b[1;48;5;231m\x1b[1;38;5;16mregex=\x1b[0m\x1b[1;38;5;202m${regex}\x1b[0m"
-# exit
+# # # echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16moutput=\x1b[0m\x1b[1;38;5;202m${output}\x1b[0m"
+# # # echo "$output" | ack -v "${filename}"
+# # # exit
+# # # # # # exit
+echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mfilename=\x1b[0m\x1b[1;38;5;82m${filename}\x1b[0m"
+echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mlineno=\x1b[0m\x1b[1;38;5;71m${lineno}\x1b[0m"
+echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mcurrent=\x1b[0m\x1b[1;38;5;206m${current}\x1b[0m"
+echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mreplace=\x1b[0m\x1b[1;38;5;33m${replace}\x1b[0m"
+echo -e "\x1b[1;48;5;231m\x1b[1;38;5;16mregex=\x1b[0m\x1b[1;38;5;202m${regex}\x1b[0m"
+exit
 
 line_matches_regex() {
     line="$1"
     if [ -z "$line" ]; then
-        1>&2 echo -e "\x1b[1;48;5;160m\x1b[1;38;5;231mERROR:\t\x1b[1;48;5;231m\x1b[1;38;5;160m line_matches_regex received no \"line\" param\x1b[0m"
+        banner
         exit 101
     fi
     shift
@@ -45,7 +55,7 @@ line_matches_regex() {
 ensure_next_lines_commented() {
     ensure_next_lineno=$(( $lineno + 1 ))
     error="false"
-    if line_matches_regex ${ensure_next_lineno} '^\s*assert_eq'; then
+    if line_matches_regex ${ensure_next_lineno} '^\s*assert_[a-z_]+[!]'; then
         1>&2 echo -e "\x1b[1;38;5;231mattempt to silence \x1b[1;38;5;33m${filename}\x1b[1;38;5;231m line \x1b[1;38;5;82m${ensure_next_lineno}\x1b[0m"
     else
         return
@@ -55,8 +65,8 @@ ensure_next_lines_commented() {
     # echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16merror=\x1b[0m\x1b[1;38;5;206m${error}\x1b[0m"
     # echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16mnext_lineno=\x1b[0m\x1b[1;38;5;33m${ensure_next_lineno}\x1b[0m"
     # exit
-    while line_matches_regex ${ensure_next_lineno} '^\s*assert_eq'; do
-        ensure_regex='^\(\s\+\)\(assert_eq[!].*;\)\s*$'
+    while line_matches_regex ${ensure_next_lineno} '^\s*assert_[a-z_]+[!]'; do
+        ensure_regex='^\(\s\+\)\(assert_[a-z_]\+[!].*;\)\s*$'
         ensure_replace='\1\/\/ \2'
         ensure_expression="${ensure_next_lineno}s/$ensure_regex/$ensure_replace/"
         if sed "${ensure_expression}" -i "$filename"; then
@@ -75,17 +85,32 @@ ensure_next_lines_commented() {
     fi
 }
 
-if [ ! -e "$filename" ]; then
+if [ -z "$filename" ]; then
+    if error=$(2>/dev/random cargo test -j1); then
+        echo -e "\x1b[1;48;5;16m\x1b[1;38;5;231mAll tests pass: \x1b[1;38;5;28mOK\x1b[0m"
+        exit 0
+    else
+        echo -e "\n\x1b[1;48;5;160m\x1b[1;38;5;231m                                                             \x1b[0m"
+        echo -e "\x1b[1;48;5;160m\x1b[1;38;5;231mERROR:\t\x1b[1;48;5;231m\x1b[1;38;5;160mtests failed                                         \x1b[0m"
+        echo -e "\x1b[0m\x1b[1;48;5;231m\x1b[1;38;5;16mtry manually fixing \x1b[1;38;5;33m${filename}\x1b[0m\x1b[1;48;5;231m\x1b[1;38;5;16m line \x1b[1;38;5;28m${lineno}             \x1b[0m"
+        echo -e "\x1b[1;48;5;160m\x1b[1;38;5;231m                                                             \x1b[0m"
+
+        1>&2 echo -e "\x1b[1;48;5;16m\x1b[1;38;5;231mAll tests pass: \x1b[1;38;5;mOK\x1b[0m"
+        echo -e "ERROR: no failed tests found, check the variable 'test_name' in ${this_script}"
+        echo -e "${error}"
+        exit 101
+    fi
+
+elif [ ! -e "$filename" ]; then
     1>&2 echo "ERROR: '${filename}' does not exist"
     exit 101
 fi
 
-rm -f "${error_filename}"
 set +e
 ensure_next_lines_commented
 set -e
 
-case "$1" in
+case "${1:-once}" in
     'auto'|'--auto')
         while ./"$script_name"; do
             ./"$script_name"
@@ -93,21 +118,23 @@ case "$1" in
         ;;
     *)
 
-        output=$(2>&1 cargo test -j1 --test "$test_name" | ack '((thread|[-][-][>]).*[a-z_]+[.]rs|left|right):' | head -3 | sed 's/^[[:space:]]*//g')
-        filename=$(echo "$output" | head -1 | sed 's,^.*\?\(thread.*at\|[-][-][>]\)\s*\([a-z_]\+/[a-z_]\+[.]rs\):\([0-9]\+\):.*,\2,g')
-        lineno=$(( $(echo "$output" | head -1 | sed 's,^.*\?\(thread.*at\|[-][-][>]\)\s*[a-z_]\+/[a-z_]\+[.]rs:\([0-9]\+\):.*,\2,g') + 0 ))
-        # # # # echo -e "\x1b[1;48;5;202m\x1b[1;38;5;16moutput=\x1b[0m\x1b[1;38;5;202m${output}\x1b[0m"
-        # # # # exit
-        error_filename=fix-test-error.sed
-
+        output=$(2>&1 cargo test -j1 --test "$test_name" | ack '(thread.*[a-z_]+[.]rs|left|right):' | head -4 | sed 's/^[[:space:]]*//g')
+        output=$(2>&1 cargo test -j1 --test "$test_name" | ack '(thread.*[a-z_]+[.]rs|left|right):' | head -4 | sed 's/^[[:space:]]*//g')
+        filename=$(echo "$output" | head -1 | sed 's,^.*\?\(thread.*at\)\s*\([a-z_]\+/[a-z_]\+[.]rs\):\([0-9]\+\):.*,\2,g')
+        if [ "$filename" != "$test_filename" ]; then
+            panic "expected filename in test output to be '${test_filename}' instead of '${filename}'"
+        fi
+        lineno=$(( $(echo "$output" | ack "${filename}" | tail -1 | sed 's,^.*\?\(thread.*at\)\s*[a-z_]\+/[a-z_]\+[.]rs:\([0-9]\+\):.*,\2,g') + 0 ))
         next_lineno=$(( $lineno + 1 ))
-        current=$(echo "$output" | tail -1 | sed 's,^.*right:\s*\([0-9]\+\).*$,\1,g')
-        replace=$(echo "$output" | tail -2 | head -1 | sed 's,^.*left:\s*\([0-9]\+\).*$,\1,g' | sed 's/\\/\\\\/g' | sed 's/\([<>/]\)/\\\1/g')
+        current=$(echo "$output" | ack -v "${filename}" | tail -1 | sed 's,^.*right:\s*\([0-9]\+\|"[^"\+]"\|[[][^]*[]]\).*$,\1,g')
+        replace=$(echo "$output" | ack -v "${filename}" | head -1 | sed 's,^.*left:\s*\([0-9]\+\|"[^"\+]"\|[[][^]*[]]\).*$,\1,g' | sed 's/\\/\\\\/g' | sed 's/\([<>/]\)/\\\1/g')
         regex="$(echo -n "${current}" | sed 's/\([^a-zA-Z0-9]\)/[\1]/g')[)][;]"
         replace="${replace});"
         current="${current});"
-
+        error_filename="${test_name}.fix-test-error.sed"
         linecount=$(( $(wc -l "$filename" | awk '{ print $1 }') + 0 ))
+        rm -f "${error_filename}"
+
         if [ $lineno -gt $linecount ]; then
             1>&2 echo "ERROR: line number ${lineno} is greater than the line count of '${filename}': ${linecount}"
             exit 101
@@ -119,11 +146,9 @@ case "$1" in
             if 2>/dev/random cargo test -j1 --test "$test_name"; then
                 rm -f "$error_filename"
                 git commit "$filename" -m "fix ${filename} line ${lineno}, such that \"${current}\" becomes \"${replace}\""
-                git push
                 expression="${next_lineno}s/^\(\s*\)\/\/\s*\(assert_[a-z_]\+!.*;\)/\1\2/"
                 if 2>"${error_filename}" sed "${expression}" -i "$filename"; then
                     git commit "$filename" -m "uncomment ${filename} line ${next_lineno} so as to trigger next fix"
-                    git push
                     rm -f "${error_filename}"
                     exit 0
                 else
