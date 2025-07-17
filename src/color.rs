@@ -300,7 +300,7 @@ pub fn term_cols() -> usize {
 
 /// determine an ANSI-256 color determined by [`from_bytes(&[byte])`]
 pub fn from_byte(byte: u8) -> u8 {
-    from_bytes(&[byte]).into()
+    byte
 }
 
 /// auto-colorize the given byte with the color determined by [from_byte]
@@ -349,30 +349,8 @@ pub fn cube_ansi_256(color: usize, op: usize) -> u8 {
     }
 }
 pub fn get_ansi_rgb(color: usize) -> [u8; 3] {
-    let color = wrap(color) as usize;
-    match color {
-        0..16 => [
-            STD_COLORS[color * 3 + 0],
-            STD_COLORS[color * 3 + 1],
-            STD_COLORS[color * 3 + 2],
-        ],
-        16..232 => {
-            // color < 6*6*6+16 ?
-            // colors 16-231 (6x6x6 cube):
-            [
-                cube_ansi_256(color, 36),
-                cube_ansi_256(color, 6),
-                cube_ansi_256(color, 1),
-            ]
-        }
-        _ => {
-            // color 232-255 (grayscale):
-            let red = wrap((2056usize + 2570usize * (color - 232usize)) / 256usize);
-            let green = red;
-            let blue = red;
-            [red, green, blue]
-        }
-    }
+    let tuple = rgb_from_ansi256(wrap(color));
+    [tuple.0, tuple.1, tuple.2]
 }
 
 pub fn format_slice_hex<I: IntoIterator<Item: LowerHex>>(items: I, color: bool) -> String {
