@@ -11,17 +11,17 @@ fn test_tag_open() {
     assert_eq!(tag!(@open, "text", 220, @color=fore), "\u{1b}[1;48;5;102m\u{1b}[1;38;5;220m<\u{1b}[0m\u{1b}[1;48;5;102m\u{1b}[1;38;5;220mtext\u{1b}[0m\u{1b}[1;48;5;102m\u{1b}[1;38;5;220m>\u{1b}[0m");
     assert_eq!(tag!(@open, "text", 220, @color=220), "\u{1b}[1;48;5;102m\u{1b}[1;38;5;220m<\u{1b}[0m\u{1b}[1;48;5;102m\u{1b}[1;38;5;220mtext\u{1b}[0m\u{1b}[1;48;5;102m\u{1b}[1;38;5;220m>\u{1b}[0m");
 }
-// #[test]
-// fn test_tag_close() {
-//     assert_eq!(tag!(@close, "text"), "\u{1b}[1;48;5;16m\u{1b}[1;38;5;7m</\u{1b}[0m\u{1b}[1;48;5;16m\u{1b}[1;38;5;7mtext\u{1b}[0m\u{1b}[1;48;5;16m\u{1b}[1;38;5;7m>\u{1b}[0m");
-//     assert_eq!(tag!(@close, "text", 220), "\u{1b}[1;48;5;102m\u{1b}[1;38;5;220m</\u{1b}[0m\u{1b}[1;48;5;102m\u{1b}[1;38;5;220mtext\u{1b}[0m\u{1b}[1;48;5;102m\u{1b}[1;38;5;220m>\u{1b}[0m");
-//     assert_eq!(tag!(@close, "text", @color=auto), "\u{1b}[1;48;5;16m\u{1b}[1;38;5;7m</\u{1b}[0m\u{1b}[1;48;5;102m\u{1b}[1;38;5;160mtext\u{1b}[0m\u{1b}[1;48;5;16m\u{1b}[1;38;5;7m>\u{1b}[0m");
-//     assert_eq!(tag!(@close, "text", @color=fore), "\u{1b}[1;48;5;0m\u{1b}[1;38;5;254m</\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;254mtext\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;254m>\u{1b}[0m");
-//     assert_eq!(tag!(@close, "text", @color=220), "\u{1b}[1;48;5;0m\u{1b}[1;38;5;254m</\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;225mtext\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;254m>\u{1b}[0m");
-//     assert_eq!(tag!(@close, "text", 220, @color=auto), "\u{1b}[1;48;5;0m\u{1b}[1;38;5;225m</\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;195mtext\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;225m>\u{1b}[0m");
-//     assert_eq!(tag!(@close, "text", 220, @color=fore), "\u{1b}[1;48;5;0m\u{1b}[1;38;5;225m</\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;225mtext\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;225m>\u{1b}[0m");
-//     assert_eq!(tag!(@close, "text", 220, @color=220), "\u{1b}[1;48;5;0m\u{1b}[1;38;5;225m</\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;225mtext\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;225m>\u{1b}[0m");
-// }
+#[test]
+fn test_tag_close() {
+    assert_eq!(tag!(@close, "text"), "\u{1b}[1;48;5;16m\u{1b}[1;38;5;7m</\u{1b}[0m\u{1b}[1;48;5;16m\u{1b}[1;38;5;7mtext\u{1b}[0m\u{1b}[1;48;5;16m\u{1b}[1;38;5;7m>\u{1b}[0m");
+    assert_eq!(tag!(@close, "text", 220), "\u{1b}[1;48;5;102m\u{1b}[1;38;5;220m</\u{1b}[0m\u{1b}[1;48;5;102m\u{1b}[1;38;5;220mtext\u{1b}[0m\u{1b}[1;48;5;102m\u{1b}[1;38;5;220m>\u{1b}[0m");
+    assert_eq!(tag!(@close, "text", @color=auto), "\u{1b}[1;48;5;16m\u{1b}[1;38;5;7m</\u{1b}[0m\u{1b}[1;48;5;102m\u{1b}[1;38;5;160mtext\u{1b}[0m\u{1b}[1;48;5;16m\u{1b}[1;38;5;7m>\u{1b}[0m");
+    assert_eq!(tag!(@close, "text", @color=fore), "\u{1b}[1;48;5;16m\u{1b}[1;38;5;7m</\u{1b}[0m\u{1b}[1;48;5;16m\u{1b}[1;38;5;7mtext\u{1b}[0m\u{1b}[1;48;5;16m\u{1b}[1;38;5;7m>\u{1b}[0m");
+    assert_eq!(tag!(@close, "text", @color=220), "\u{1b}[1;48;5;0m\u{1b}[1;38;5;254m</\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;225mtext\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;254m>\u{1b}[0m");
+    assert_eq!(tag!(@close, "text", 220, @color=auto), "\u{1b}[1;48;5;0m\u{1b}[1;38;5;225m</\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;195mtext\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;225m>\u{1b}[0m");
+    assert_eq!(tag!(@close, "text", 220, @color=fore), "\u{1b}[1;48;5;0m\u{1b}[1;38;5;225m</\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;225mtext\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;225m>\u{1b}[0m");
+    assert_eq!(tag!(@close, "text", 220, @color=220), "\u{1b}[1;48;5;0m\u{1b}[1;38;5;225m</\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;225mtext\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;225m>\u{1b}[0m");
+}
 // #[test]
 // fn test_tag_wrap() {
 //     assert_eq!(tag!(@wrap, "tag", "text"), "\u{1b}[1;48;5;0m\u{1b}[1;38;5;254m<\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;254mtag\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;254m>\u{1b}[0m\n    \u{1b}[1;48;5;0m\u{1b}[1;38;5;254mtext\u{1b}[0m\n\u{1b}[1;48;5;0m\u{1b}[1;38;5;254m</\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;254mtag\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;254m>\u{1b}[0m");
