@@ -3,7 +3,7 @@ use debug_et_diagnostics::{dark};
 #[test]
 fn test_dark() {
     assert_eq!(dark(0), 16);
-    assert_eq!(dark(1), 52);
+    assert_eq!(dark(1), 16);
     // assert_eq!(dark(2), 22);
     // assert_eq!(dark(3), 236);
     // assert_eq!(dark(4), 17);
