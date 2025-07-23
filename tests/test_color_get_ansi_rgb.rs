@@ -23,7 +23,7 @@ use debug_et_diagnostics::get_ansi_rgb;
 
 #[test]
 fn test_cube() {
-    assert_get_ansi_rgb!(17, [135, 95, 95]);
+    assert_get_ansi_rgb!(17, [0, 0, 95]);
     // assert_get_ansi_rgb!(18, [175, 95, 255]);
     // assert_get_ansi_rgb!(19, [215, 135, 175]);
     // assert_get_ansi_rgb!(20, [255, 175, 95]);
