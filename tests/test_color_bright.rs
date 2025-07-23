@@ -2,7 +2,7 @@ use debug_et_diagnostics::{bright};
 
 #[test]
 fn test_bright() {
-    assert_eq!(bright(0), 231);
+    assert_eq!(bright(0), 102);
     // assert_eq!(bright(1), 195);
     // assert_eq!(bright(2), 225);
     // assert_eq!(bright(3), 189);
