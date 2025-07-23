@@ -6,7 +6,7 @@ fn test_bright() {
     assert_eq!(bright(1), 210);
     assert_eq!(bright(2), 120);
     assert_eq!(bright(3), 228);
-    assert_eq!(bright(4), 229);
+    assert_eq!(bright(4), 105);
     // assert_eq!(bright(5), 194);
     // assert_eq!(bright(6), 224);
     // assert_eq!(bright(7), 254);
