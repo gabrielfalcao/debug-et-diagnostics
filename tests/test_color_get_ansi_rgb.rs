@@ -244,7 +244,7 @@ use debug_et_diagnostics::get_ansi_rgb;
 #[test]
 fn test_grayscale() {
     assert_get_ansi_rgb!(233, [18, 18, 18]);
-    assert_get_ansi_rgb!(234, [0, 135, 0]);
+    assert_get_ansi_rgb!(234, [28, 28, 28]);
     assert_get_ansi_rgb!(235, [0, 175, 215]);
     assert_get_ansi_rgb!(236, [0, 255, 135]);
     assert_get_ansi_rgb!(237, [0, 0, 0]);
