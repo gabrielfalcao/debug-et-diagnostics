@@ -14,16 +14,17 @@ autotests = false
 
 
 [[test]]
-name = "test_color_get_ansi_rgb"
-path = "./tests/test_color_get_ansi_rgb.rs"
-
-[[test]]
 name = "test_color_bright"
 path = "./tests/test_color_bright.rs"
 
 [[test]]
 name = "test_color_dark"
 path = "./tests/test_color_dark.rs"
+
+[[test]]
+name = "test_color_get_ansi_rgb"
+path = "./tests/test_color_get_ansi_rgb.rs"
+
 
 [[test]]
 name = "test_color_from_byte"
