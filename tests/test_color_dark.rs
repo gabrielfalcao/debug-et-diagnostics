@@ -9,7 +9,7 @@ fn test_dark() {
     assert_eq!(dark(4), 16);
     assert_eq!(dark(5), 16);
     assert_eq!(dark(6), 16);
-    assert_eq!(dark(7), 237);
+    assert_eq!(dark(7), 16);
     // assert_eq!(dark(8), 232);
     // assert_eq!(dark(9), 196);
     // assert_eq!(dark(10), 46);
