@@ -265,7 +265,7 @@ fn test_grayscale() {
     assert_get_ansi_rgb!(252, [208, 208, 208]);
     assert_get_ansi_rgb!(253, [218, 218, 218]);
     assert_get_ansi_rgb!(254, [228, 228, 228]);
-    assert_get_ansi_rgb!(255, [0, 0, 0]);
+    assert_get_ansi_rgb!(255, [238, 238, 238]);
 }
 
 #[macro_export]
