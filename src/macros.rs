@@ -367,18 +367,21 @@ macro_rules! step {
         $crate::step!(length=$crate::color::term_cols(), $text)
     }};
     (fg=$fg:expr, $text:expr $(,)?) => {{
-        $crate::step!(bg=$fg, fg=$crate::color::invert_ansi($fg), length=$crate::color::term_cols(), $text)
+        let fg=$crate::color::wrap($fg as usize) as usize;
+        $crate::step!(bg=fg, fg=$crate::color::invert_ansi(fg), length=$crate::color::term_cols(), $text)
     }};
     (bg=$bg:expr, fg=$fg:expr, $text:expr $(,)?) => {{
-        $crate::step!(bg=$bg, fg=$fg, length=$crate::color::term_cols(), $text)
+        let bg=$crate::color::wrap($bg as usize) as usize;
+        let fg=$crate::color::wrap($fg as usize) as usize;
+        $crate::step!(bg=bg, fg=fg, length=$crate::color::term_cols(), $text)
     }};
     (length=$length:expr, $text:expr $(,)?) => {{
-        let (bg, fg) = $crate::color::couple(line!() as usize);
+        let (bg, fg) = $crate::color::couple(line!() as usize) as usize;
         $crate::step!(bg=bg, fg=fg, length=$length, $text)
     }};
     (bg=$bg:expr, fg=$fg:expr, length=$length:expr, $text:expr $(,)?) => {{
-        let bg = $crate::color::wrap($bg as usize);
-        let fg = $crate::color::wrap($fg as usize);
+        let bg = $crate::color::wrap($bg as usize) as usize;
+        let fg = $crate::color::wrap($fg as usize) as usize;
 
         let text = $text.to_string();
         let bar = $crate::color::ansi(
@@ -425,19 +428,24 @@ macro_rules! step {
 #[macro_export]
 macro_rules! step_dbg {
     (bg=$bg:expr, fg=$fg:expr, length=$length:expr, $($arg:expr),* $(,)?) => {{
-        let text = format!("{}", [
+        let bg=$crate::color::wrap($bg as usize);
+        let fg=$crate::color::wrap($fg as usize);
+        let text = format!("{}{}", $crate::reset(""), [
             $($crate::indent!(format!("{} = {}", $crate::color::auto(stringify!($arg)), $crate::color::auto(format!("{:#?}", $arg))))),*
         ].join("\n"));
-        $crate::step!(bg=$bg, fg=$fg, length=$length, text);
+        $crate::step!(bg=bg, fg=fg, length=$length, text);
     }};
     (bg=$bg:expr, fg=$fg:expr, $($arg:expr),* $(,)?) => {{
-        $crate::step_dbg!(bg=$bg, fg=$fg, length=$crate::color::term_cols(), $($arg),*)
+        let bg=$crate::color::wrap($bg as usize);
+        let fg=$crate::color::wrap($fg as usize);
+        $crate::step_dbg!(bg=bg, fg=fg, length=$crate::color::term_cols(), $($arg),*)
     }};
     (fg=$fg:expr, $($arg:expr),* $(,)?) => {{
-        $crate::step_dbg!(bg=$fg, fg=$crate::color::invert_ansi($fg), length=$crate::color::term_cols(), $($arg),*)
+        let fg=$crate::color::wrap($fg as usize) as usize;
+        $crate::step_dbg!(bg=fg, fg=$crate::color::invert_ansi(fg), length=$crate::color::term_cols(), $($arg),*)
     }};
     ($($arg:expr),* $(,)?) => {{
-        let fg=$crate::color::wrap(line!() as usize);
+        let fg=$crate::color::wrap(line!() as usize) as usize;
         $crate::step_dbg!(bg=fg, fg=$crate::color::invert_ansi(fg), length=$crate::color::term_cols(), $($arg),*)
     }};
     () => {{

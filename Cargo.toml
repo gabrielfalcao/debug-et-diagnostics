@@ -1,6 +1,6 @@
 [package]
 name = "debug-et-diagnostics"
-version = "0.1.4"
+version = "0.2.0"
 edition = "2024"
 description = "set of macros and tools to colorfully debug and diagnose non-trivial code"
 documentation = "https://docs.rs/debug-et-diagnostics"
@@ -47,3 +47,9 @@ path = "tests/test_macros.rs"
 
 [dependencies]
 ansi_colours = "1.2.3"
+colorsys = { version = "0.7.0", optional = true }
+ioctl-term-light = "0.1.0"
+
+[features]
+default = ["colorsys"]
+colorsys = ["dep:colorsys"]

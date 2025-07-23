@@ -1,6 +1,10 @@
 use ansi_colours::{ansi256_from_rgb, rgb_from_ansi256};
 use std::fmt::{Debug, Display, LowerHex};
 use std::iter::{IntoIterator, Iterator};
+
+#[cfg(feature = "colorsys")]
+use colorsys::{Ansi256, ColorAlpha, ColorTransform, Hsl, Rgb};
+
 const DEFAULT_COLUMNS: usize = 130;
 
 /// reset the ANSI colors of the given test
@@ -209,12 +213,24 @@ pub fn merge_rgb<I: IntoIterator<Item = [u8; 3]> + Clone>(rgbs: I, extra: bool) 
 /// foreground color then uses [invert_bw] to
 /// determine the background color.
 pub fn couple(color: usize) -> (u8, u8) {
-    let fore = bright(color);
+    let fore = wrap(color);
     let back = invert_bw(fore as usize);
     (fore, back)
 }
 
 /// converts the given color to rgb triple then inverts the rgb and converts back to ansi256
+#[cfg(feature = "colorsys")]
+pub fn invert_ansi(color: usize) -> u8 {
+    let color = Ansi256::new(wrap(color));
+    let mut hsl = Hsl::from(&Rgb::from(color));
+    hsl.set_lightness(100.0-hsl.lightness());
+    let mut rgb = Rgb::from(&hsl);
+    rgb.invert();
+    let color = Ansi256::from(&rgb);
+    color.code()
+}
+/// converts the given color to rgb triple then inverts the rgb and converts back to ansi256
+#[cfg(not(feature = "colorsys"))]
 pub fn invert_ansi(color: usize) -> u8 {
     if is_dark_rgb_band(color) {
         bright(rgb_to_byte(invert_rgb(rgb_from_byte(wrap(color)))) as usize)
@@ -224,16 +240,35 @@ pub fn invert_ansi(color: usize) -> u8 {
 }
 
 /// converts the given color to rgb triple then inverts the rgb and converts back to ansi256
+#[cfg(feature = "colorsys")]
+pub fn invert_rgb(color: [u8; 3]) -> [u8; 3] {
+    let mut rgb = Rgb::from(color);
+    rgb.invert();
+    rgb.into()
+}
+
+/// converts the given color to rgb triple then inverts the rgb and converts back to ansi256
+#[cfg(not(feature = "colorsys"))]
 pub fn invert_rgb(color: [u8; 3]) -> [u8; 3] {
     [255u8 - color[0], 255u8 - color[1], 255u8 - color[2]]
 }
 
 /// naive heuristic to return the brightest opposite of the given color.
+#[cfg(not(feature = "colorsys"))]
 pub fn invert_bw(color: usize) -> u8 {
     match color {
         0 | 8 | 16..21 | 52..61 | 88..93 | 232..239 => 231,
         _ => 16,
     }
+}
+/// brings the color to grayscale then inverts it
+#[cfg(feature = "colorsys")]
+pub fn invert_bw(color: usize) -> u8 {
+    let color = Ansi256::new(wrap(color));
+    let mut rgb = Rgb::from(color);
+    rgb.grayscale_simple();
+    rgb.invert();
+    Ansi256::from(&rgb).code()
 }
 
 /// return true if the given rgb band is bright
@@ -250,6 +285,15 @@ pub fn bright_rgb_band(color: usize) -> u8 {
     }
 }
 /// return a brighter color near the given one via [bright_rgb_band].
+#[cfg(feature = "colorsys")]
+pub fn bright(color: usize) -> u8 {
+    let color = wrap(color);
+    let mut rgb = Rgb::from(Ansi256::new(color));
+    rgb.lighten(50.0);
+    Ansi256::from(rgb).code()
+}
+/// return a brighter color near the given one via [bright_rgb_band].
+#[cfg(not(feature = "colorsys"))]
 pub fn bright(color: usize) -> u8 {
     let color = wrap(color);
     let [r, g, b] = rgb_from_byte(color);
@@ -274,6 +318,14 @@ pub fn dark_rgb_band(color: usize) -> u8 {
     }
 }
 /// return a darker color near the given one via [dark_rgb_band].
+#[cfg(feature = "colorsys")]
+pub fn dark(color: usize) -> u8 {
+    let color = wrap(color);
+    let mut rgb = Rgb::from(Ansi256::new(color));
+    rgb.lighten(-50.0);
+    Ansi256::from(rgb).code()
+}
+#[cfg(not(feature = "colorsys"))]
 pub fn dark(color: usize) -> u8 {
     let color = wrap(color);
     let [r, g, b] = rgb_from_byte(color);
@@ -286,11 +338,10 @@ pub fn dark(color: usize) -> u8 {
 
 /// wraps the given usize via remainder
 pub fn wrap(color: usize) -> u8 {
-    let wrapped = (if color > 0 { color % 255 } else { color }) as u8;
-    if invert_bw(wrapped as usize) == 231 {
-        from_bytes(&non_zero_be_bytes(color))
+    if color <= u8::MAX.into() {
+        color as u8
     } else {
-        wrapped
+        from_bytes(&color.to_ne_bytes())
     }
 }
 
@@ -302,54 +353,12 @@ pub fn non_zero_be_bytes(color: usize) -> Vec<u8> {
     bytes
 }
 
-/// naive function for unix terminals that calls stty to determine the
-/// number of columns of the terminal.
-///
-/// The rationale of the approach is to avoid linking to libc in order
-/// to do ioctl FFI calls and keeping the rust crate lightweight.
-///
-/// This function might be rewritten using a more sophisticated
-/// approach in the future.
-fn io_term_cols() -> std::io::Result<usize> {
-    if let Ok(cols) = std::env::var("COLUMNS") {
-        if let Ok(cols) = usize::from_str_radix(&cols, 10) {
-            return Ok(cols);
-        }
-    }
-    use std::process::{Command, Stdio};
-    let mut cmd = Command::new("/bin/stty");
-    let cmd = cmd.args(vec!["-a"]);
-    let cmd = cmd.stdin(Stdio::inherit());
-    let cmd = cmd.stdout(Stdio::piped());
-    let cmd = cmd.stderr(Stdio::piped());
-    let child = cmd.spawn()?;
-    let output = child.wait_with_output()?;
-    let lines = String::from_utf8_lossy(&output.stdout)
-        .to_string()
-        .lines()
-        .map(String::from)
-        .collect::<Vec<String>>();
-    let lines = lines[0]
-        .split(';')
-        .map(String::from)
-        .collect::<Vec<String>>();
-    if lines.len() > 2 {
-        let fields = lines[2]
-            .split(' ')
-            .map(String::from)
-            .collect::<Vec<String>>();
-        if let Ok(cols) = usize::from_str_radix(&fields[1], 10) {
-            return Ok(cols);
-        }
-    }
-    Ok(DEFAULT_COLUMNS)
-}
-
-/// tries to obtain the number of columns of the terminal via
-/// [io_term_cols] and falls back to
-/// [DEFAULT_COLUMNS] in case of error.
+/// tries to obtain the number of columns of the [DEFAULT_COLUMNS] in case of error.
 pub fn term_cols() -> usize {
-    io_term_cols().unwrap_or_else(|_| DEFAULT_COLUMNS)
+    match ioctl_term_light::cols() {
+        0 => DEFAULT_COLUMNS,
+        cols => cols as usize,
+    }
 }
 
 /// determine an ANSI-256 color determined by [`from_bytes(&[byte])`]
@@ -466,3 +475,11 @@ pub fn format_slice_debug<I: IntoIterator<Item: Debug>>(items: I, color: bool) -
             .join(", ")
     )
 }
+
+// SEEALSO:
+// https://gist.github.com/XVilka/8346728
+// https://github.com/termstandard/colors?tab=readme-ov-file
+// https://gist.github.com/lilydjwg/fdeaf79e921c2f413f44b6f613f6ad53
+// https://github.com/robertknight/konsole/blob/master/tests/color-spaces.pl
+// https://github.com/JohnMorales/dotfiles/blob/master/colors/24-bit-color.sh
+// https://gitlab.gnome.org/GNOME/vte/-/blob/master/perf/img.sh

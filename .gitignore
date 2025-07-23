@@ -2,3 +2,5 @@
 
 *.sed
 .*.sed
+
+.logs/
