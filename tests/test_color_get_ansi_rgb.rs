@@ -61,7 +61,7 @@ fn test_cube() {
     assert_get_ansi_rgb!(52, [95, 0, 0]);
     assert_get_ansi_rgb!(53, [95, 0, 95]);
     assert_get_ansi_rgb!(54, [95, 0, 135]);
-    // assert_get_ansi_rgb!(55, [88, 88, 88]);
+    assert_get_ansi_rgb!(55, [88, 88, 88]);
     // assert_get_ansi_rgb!(56, [175, 135, 0]);
     // assert_get_ansi_rgb!(57, [215, 0, 0]);
     // assert_get_ansi_rgb!(58, [0, 0, 0]);
