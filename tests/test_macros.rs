@@ -19,7 +19,7 @@ fn test_tag_close() {
     assert_eq!(tag!(@close, "text", @color=fore), "\u{1b}[1;48;5;16m\u{1b}[1;38;5;7m</\u{1b}[0m\u{1b}[1;48;5;16m\u{1b}[1;38;5;7mtext\u{1b}[0m\u{1b}[1;48;5;16m\u{1b}[1;38;5;7m>\u{1b}[0m");
     assert_eq!(tag!(@close, "text", @color=220), "\u{1b}[1;48;5;16m\u{1b}[1;38;5;7m</\u{1b}[0m\u{1b}[1;48;5;102m\u{1b}[1;38;5;220mtext\u{1b}[0m\u{1b}[1;48;5;16m\u{1b}[1;38;5;7m>\u{1b}[0m");
     assert_eq!(tag!(@close, "text", 220, @color=auto), "\u{1b}[1;48;5;102m\u{1b}[1;38;5;220m</\u{1b}[0m\u{1b}[1;48;5;102m\u{1b}[1;38;5;160mtext\u{1b}[0m\u{1b}[1;48;5;102m\u{1b}[1;38;5;220m>\u{1b}[0m");
-    assert_eq!(tag!(@close, "text", 220, @color=fore), "\u{1b}[1;48;5;0m\u{1b}[1;38;5;225m</\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;225mtext\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;225m>\u{1b}[0m");
+    assert_eq!(tag!(@close, "text", 220, @color=fore), "\u{1b}[1;48;5;102m\u{1b}[1;38;5;220m</\u{1b}[0m\u{1b}[1;48;5;102m\u{1b}[1;38;5;220mtext\u{1b}[0m\u{1b}[1;48;5;102m\u{1b}[1;38;5;220m>\u{1b}[0m");
     assert_eq!(tag!(@close, "text", 220, @color=220), "\u{1b}[1;48;5;0m\u{1b}[1;38;5;225m</\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;225mtext\u{1b}[0m\u{1b}[1;48;5;0m\u{1b}[1;38;5;225m>\u{1b}[0m");
 }
 // #[test]
