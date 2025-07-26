@@ -84,7 +84,28 @@ pub fn back<T: Display>(text: T, back: usize) -> String {
 pub fn auto<T: Display>(word: T) -> String {
     fore(
         word.to_string(),
+        u8::from_str_radix(&word.to_string(), 10)
+            .unwrap_or_else(|_| from_display(word.to_string()))
+            .into(),
+    )
+}
+/// brighter version of [auto]
+pub fn auto_bright<T: Display>(word: T) -> String {
+    fore(
+        word.to_string(),
         bright(
+            u8::from_str_radix(&word.to_string(), 10)
+                .unwrap_or_else(|_| from_display(word.to_string()))
+                .into(),
+        )
+        .into(),
+    )
+}
+/// darker version of [auto]
+pub fn auto_dark<T: Display>(word: T) -> String {
+    fore(
+        word.to_string(),
+        dark(
             u8::from_str_radix(&word.to_string(), 10)
                 .unwrap_or_else(|_| from_display(word.to_string()))
                 .into(),
@@ -223,7 +244,7 @@ pub fn couple(color: usize) -> (u8, u8) {
 pub fn invert_ansi(color: usize) -> u8 {
     let color = Ansi256::new(wrap(color));
     let mut hsl = Hsl::from(&Rgb::from(color));
-    hsl.set_lightness(100.0-hsl.lightness());
+    hsl.set_lightness(100.0 - hsl.lightness());
     let mut rgb = Rgb::from(&hsl);
     rgb.invert();
     let color = Ansi256::from(&rgb);

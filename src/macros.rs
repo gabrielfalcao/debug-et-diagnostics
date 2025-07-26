@@ -5,7 +5,7 @@ macro_rules! location {
         let location = format!(
             "{}{}{}:{}",
             $crate::color::auto($crate::function_name!()),
-            $crate::color::fore(" @ ", 220),
+            $crate::color::ansi(" @ ", 220, 16),
             $crate::filename!(),
             $crate::color::auto(line!().to_string())
         );
@@ -376,7 +376,7 @@ macro_rules! step {
         $crate::step!(bg=bg, fg=fg, length=$crate::color::term_cols(), $text)
     }};
     (length=$length:expr, $text:expr $(,)?) => {{
-        let (bg, fg) = $crate::color::couple(line!() as usize) as usize;
+        let (bg, fg) = $crate::color::couple(line!() as usize);
         $crate::step!(bg=bg, fg=fg, length=$length, $text)
     }};
     (bg=$bg:expr, fg=$fg:expr, length=$length:expr, $text:expr $(,)?) => {{
