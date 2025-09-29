@@ -7,7 +7,7 @@ use colorsys::{Ansi256, ColorAlpha, ColorTransform, Hsl, Rgb};
 
 const DEFAULT_COLUMNS: usize = 130;
 
-/// reset the ANSI colors of the given test
+/// reset the ANSI colors of the given text
 pub fn reset<T: Display>(text: T) -> String {
     format!("{}\x1b[0m", text)
 }
@@ -254,9 +254,9 @@ pub fn invert_ansi(color: usize) -> u8 {
 #[cfg(not(feature = "colorsys"))]
 pub fn invert_ansi(color: usize) -> u8 {
     if is_dark_rgb_band(color) {
-        bright(rgb_to_byte(invert_rgb(rgb_from_byte(wrap(color)))) as usize)
+        bright(rgb_to_byte(invert_rgb(dark(rgb_from_byte(wrap(color))))) as usize)
     } else {
-        dark(rgb_to_byte(invert_rgb(rgb_from_byte(wrap(color)))) as usize)
+        dark(rgb_to_byte(invert_rgb(bright(rgb_from_byte(wrap(color))))) as usize)
     }
 }
 
