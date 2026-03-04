@@ -46,7 +46,7 @@ panic() {
     1>&2 echo -e "\x1b[1;48;5;160m\x1b[1;38;5;231m${msg_start}\x1b[1;48;5;231m\x1b[1;38;5;160m${msg}\x1b[1;48;5;160m"
     1>&2 echo -e "\x1b[1;48;5;160m\x1b[1;38;5;231m${location_start}\x1b[1;48;5;231m\x1b[1;38;5;124m${location}\x1b[1;48;5;160m"
     1>&2 echo -e "\x1b[1;48;5;160m\x1b[1;38;5;231m${hr}\x1b[0m\n"
-    exit 101
+    exit 1
 }
 require_color_argument() {
     function=$(get_caller)
@@ -124,7 +124,7 @@ function error() {
     shift
     msg="$@"
     display_error "$desc" "$msg"
-    exit 101
+    exit 1
 }
 function calc_indent_text() {
     requested=$1;
@@ -134,7 +134,7 @@ function calc_indent_text() {
     text_width=${#text}
     if [ -z "$text" ]; then
         display_error "calc_indent_text" "MISSING TEXT"
-        exit 101
+        exit 1
     fi
     if [ ${padby} -gt ${text_width} ]; then
         padby=$(( $padby - ${text_width} ))
@@ -247,7 +247,7 @@ banner() {
     bar_text_center ${fg} ${bg} "${title}"
     bar_text_center ${bg} ${fg} "${msg}"
     bar ${fg}
-    exit 101
+    exit 1
 }
 
 if [ "$0" == "${BASH_SOURCE[0]}" ]; then

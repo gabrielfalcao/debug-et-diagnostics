@@ -42,13 +42,13 @@ line_matches_regex() {
     line="$1"
     if [ -z "$line" ]; then
         banner
-        exit 101
+        exit 1
     fi
     shift
     regex="$@"
     if [ -z "$regex" ]; then
         1>&2 echo -e "\x1b[1;48;5;160m\x1b[1;38;5;231mERROR:\t\x1b[1;48;5;231m\x1b[1;38;5;160m line_matches_regex received no \"regex\" param\x1b[0m"
-        exit 101
+        exit 1
     fi
     2>/dev/random ack --with-filename --column "${regex}" "${filename}" | 2>/dev/random 1>/dev/random ack "${filename}:${line}:"
 }
@@ -100,12 +100,12 @@ if [ -z "$filename" ]; then
         1>&2 echo -e "\x1b[1;48;5;16m\x1b[1;38;5;231mAll tests pass: \x1b[1;38;5;mOK\x1b[0m"
         echo -e "ERROR: no failed tests found, check the variable 'test_name' in ${this_script}"
         echo -e "${error}"
-        exit 101
+        exit 1
     fi
 
 elif [ ! -e "$filename" ]; then
     1>&2 echo "ERROR: '${filename}' does not exist"
-    exit 101
+    exit 1
 fi
 
 # set +e
@@ -144,7 +144,7 @@ case "${1:-once}" in
 
         if [ $lineno -gt $linecount ]; then
             1>&2 echo "ERROR: line number ${lineno} is greater than the line count of '${filename}': ${linecount}"
-            exit 101
+            exit 1
         fi
 
         expression="${lineno}s/$regex/$replace/"
@@ -165,14 +165,14 @@ case "${1:-once}" in
             #         1>&2 echo -e "\x1b[1;48;5;160m\x1b[1;38;5;231mERROR:\t\x1b[1;48;5;231m\x1b[1;38;5;160m failed to uncomment \x1b[1;38;5;33m${filename}\x1b[0m\x1b[1;48;5;231m\x1b[1;38;5;16m line \x1b[1;38;5;28m${lineno}             \x1b[0m"
             #         git diff
             #         git diff --staged
-            #         exit 101
+            #         exit 1
             #     fi
             # else
             #     echo -e "\n\x1b[1;48;5;160m\x1b[1;38;5;231m                                                             \x1b[0m"
             #     echo -e "\x1b[1;48;5;160m\x1b[1;38;5;231mERROR:\t\x1b[1;48;5;231m\x1b[1;38;5;160mtests failed                                         \x1b[0m"
             #     echo -e "\x1b[0m\x1b[1;48;5;231m\x1b[1;38;5;16mtry manually fixing \x1b[1;38;5;33m${filename}\x1b[0m\x1b[1;48;5;231m\x1b[1;38;5;16m line \x1b[1;38;5;28m${lineno}             \x1b[0m"
             #     echo -e "\x1b[1;48;5;160m\x1b[1;38;5;231m                                                             \x1b[0m"
-            #     exit 101
+            #     exit 1
             # fi
         else
             echo -en "\x1b[1;38;5;231m"
@@ -186,7 +186,7 @@ case "${1:-once}" in
             echo
             # cat "${error_filename}" | sed "s/^\(.\)\{,\}"
             # 1>&2 echo "failed to fix file \"${filename}\" line ${lineno}"
-            exit 101
+            exit 1
         fi
         ;;
 esac
