@@ -1,4 +1,4 @@
-use debug_et_diagnostics::{invert_ansi, from_byte};
+use debug_et_diagnostics::{from_byte, invert_ansi};
 
 #[test]
 fn test_invert_ansi() {

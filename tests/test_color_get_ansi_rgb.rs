@@ -276,8 +276,13 @@ macro_rules! assert_get_ansi_rgb {
         $(,)?
     ) => {{
         let ansi = wrap($ansi as usize);
-        use debug_et_diagnostics::{wrap, format_slice_display};
-        assert_eq!(get_ansi_rgb(ansi as usize), $expected_slice, "expected get_ansi_rgb({ansi}) to equal {}", format_slice_display($expected_slice, true));
+        use debug_et_diagnostics::{format_slice_display, wrap};
+        assert_eq!(
+            get_ansi_rgb(ansi as usize),
+            $expected_slice,
+            "expected get_ansi_rgb({ansi}) to equal {}",
+            format_slice_display($expected_slice, true)
+        );
         // let tuple = rgb_from_ansi256(ansi);
         // let ansi_colours_slice = [tuple.0, tuple.1, tuple.2];
         // assert_eq!(

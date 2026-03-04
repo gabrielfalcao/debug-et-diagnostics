@@ -3,6 +3,7 @@
 #![doc(issue_tracker_base_url = "https://github.com/gabrielfalcao/debug-et-diagnostics/issues/")]
 //! set of macros and tools to colorfully debug and diagnose non-trivial code
 
+// debug_et_diagnostics
 pub mod color;
 
 #[doc(inline)]

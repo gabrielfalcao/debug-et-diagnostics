@@ -1,4 +1,4 @@
-use debug_et_diagnostics::{bright};
+use debug_et_diagnostics::bright;
 
 #[test]
 fn test_bright() {

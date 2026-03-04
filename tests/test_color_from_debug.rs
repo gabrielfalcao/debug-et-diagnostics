@@ -1,4 +1,4 @@
-use debug_et_diagnostics::{from_debug};
+use debug_et_diagnostics::from_debug;
 
 #[test]
 fn test_from_debug_letter_A_to_Z() {
@@ -549,9 +549,6 @@ fn test_from_debug_number_string_0_to_255() {
     assert_eq!(from_debug("254"), 119);
     assert_eq!(from_debug("255"), 40);
 }
-
-
-
 
 #[test]
 fn test_from_debug_number_string_0x00_to_0xff() {

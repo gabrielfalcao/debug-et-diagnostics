@@ -1,4 +1,6 @@
 /// colofully prints the "location" of the macro call (function name, filename and line number) in the code
+
+// debug_et_diagnostics
 #[macro_export]
 macro_rules! location {
     () => {{

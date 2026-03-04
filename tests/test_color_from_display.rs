@@ -1,4 +1,4 @@
-use debug_et_diagnostics::{from_display};
+use debug_et_diagnostics::from_display;
 
 #[test]
 fn test_from_display_letter_A_to_Z() {
@@ -549,9 +549,6 @@ fn test_from_display_number_string_0_to_255() {
     assert_eq!(from_display("254"), 228);
     assert_eq!(from_display("255"), 238);
 }
-
-
-
 
 #[test]
 fn test_from_display_number_string_0x00_to_0xff() {

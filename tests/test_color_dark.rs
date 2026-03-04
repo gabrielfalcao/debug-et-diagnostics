@@ -1,4 +1,4 @@
-use debug_et_diagnostics::{dark};
+use debug_et_diagnostics::dark;
 
 #[test]
 fn test_dark() {

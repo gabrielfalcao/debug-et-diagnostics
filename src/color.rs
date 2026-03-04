@@ -16,26 +16,31 @@ pub fn reset<T: Display>(text: T) -> String {
 pub fn fg<T: Display>(text: T, fg: usize) -> String {
     format!("\x1b[1;38;5;{}m{}", wrap(fg), text)
 }
+
 /// colorize the background of the given text without resetting (ANSI 256 colors)
 pub fn bg<T: Display>(text: T, bg: usize) -> String {
     format!("\x1b[1;48;5;{}m{}", wrap(bg), text)
 }
+
 /// colorize the foreground and backrground of the given text without resetting
 ///
 /// > shorthand combination of [bg] and [fg]
 pub fn bgfg<T: Display>(text: T, fore: usize, back: usize) -> String {
     bg(fg(text, wrap(fore) as usize), wrap(back) as usize)
 }
+
 /// colorize the foreground and backrground of the given text and reset the colors afterwards
 pub fn ansi<T: Display>(text: T, fore: usize, back: usize) -> String {
     reset(bgfg(text, fore as usize, back as usize))
 }
+
 /// pad text by the number of columns determined by [term_cols]
 pub fn pad_columns<T: Display>(text: T) -> String {
     let text = text.to_string();
     let cols = term_cols();
     pad(text, cols)
 }
+
 /// pad text
 pub fn pad<T: Display>(text: T, length: usize) -> String {
     let text = text.to_string();
@@ -66,20 +71,24 @@ pub fn pad<T: Display>(text: T, length: usize) -> String {
         })
     )
 }
+
 /// clear the screen
 pub fn ansi_clear() -> String {
     "\x1b[2J\x1b[3J\x1b[H".to_string()
 }
+
 /// colorize the foreground of the given text and reset afterwards
 pub fn fore<T: Display>(text: T, fore: usize) -> String {
     let (fore, back) = couple(fore);
     ansi(text, fore as usize, back as usize)
 }
+
 /// colorize the backrground of the given text and reset afterwards
 pub fn back<T: Display>(text: T, back: usize) -> String {
     let (back, fore) = couple(back);
     ansi(text, fore as usize, back as usize)
 }
+
 /// auto-colorize the given text with the color determined by [from_display]
 pub fn auto<T: Display>(word: T) -> String {
     fore(
@@ -89,6 +98,7 @@ pub fn auto<T: Display>(word: T) -> String {
             .into(),
     )
 }
+
 /// brighter version of [auto]
 pub fn auto_bright<T: Display>(word: T) -> String {
     fore(
@@ -101,6 +111,7 @@ pub fn auto_bright<T: Display>(word: T) -> String {
         .into(),
     )
 }
+
 /// darker version of [auto]
 pub fn auto_dark<T: Display>(word: T) -> String {
     fore(
@@ -113,6 +124,7 @@ pub fn auto_dark<T: Display>(word: T) -> String {
         .into(),
     )
 }
+
 /// auto-colorize the underlying bytes of given text with the color determined by [from_bytes]
 pub fn from_display<T: Display>(word: T) -> u8 {
     let string = format!("{word}");
@@ -176,10 +188,12 @@ pub fn from_display<T: Display>(word: T) -> u8 {
             .unwrap_or_else(|| string.as_bytes().to_vec()),
     )
 }
+
 /// auto-colorize the underlying bytes of given text with the color determined by [from_bytes]
 pub fn from_debug<T: Debug>(word: T) -> u8 {
     from_bytes(format!("{word:#?}").as_bytes())
 }
+
 /// determine a triple of RGB colors of a string determined by [rgb_from_bytes]
 pub fn rgb_from_display<T: Display>(word: T) -> [u8; 3] {
     rgb_from_bytes(word.to_string().as_bytes())
@@ -193,11 +207,13 @@ pub fn from_bytes(bytes: &[u8]) -> u8 {
     }
     color
 }
+
 /// simple and naive algorithm to determine a triple of RGB colors
 /// based on XOR'ing the given slice of bytes;
 pub fn rgb_from_bytes(bytes: &[u8]) -> [u8; 3] {
     merge_rgb(bytes.into_iter().map(|byte| rgb_from_byte(*byte)), false)
 }
+
 /// returns a `[red, green, blue]` slice `[u8; 3]` from a single byte
 pub fn rgb_from_byte(byte: u8) -> [u8; 3] {
     let tuple = rgb_from_ansi256(byte);
@@ -208,6 +224,7 @@ pub fn rgb_from_byte(byte: u8) -> [u8; 3] {
 pub fn rgb_to_byte(rgb: [u8; 3]) -> u8 {
     ansi256_from_rgb(rgb)
 }
+
 /// merges a sequence of slice `[u8; 3]` into a single slice `[u8; 3]`
 pub fn merge_rgb<I: IntoIterator<Item = [u8; 3]> + Clone>(rgbs: I, extra: bool) -> [u8; 3] {
     let mut result = [0u8; 3];
@@ -250,6 +267,7 @@ pub fn invert_ansi(color: usize) -> u8 {
     let color = Ansi256::from(&rgb);
     color.code()
 }
+
 /// converts the given color to rgb triple then inverts the rgb and converts back to ansi256
 #[cfg(not(feature = "colorsys"))]
 pub fn invert_ansi(color: usize) -> u8 {
@@ -282,6 +300,7 @@ pub fn invert_bw(color: usize) -> u8 {
         _ => 16,
     }
 }
+
 /// brings the color to grayscale then inverts it
 #[cfg(feature = "colorsys")]
 pub fn invert_bw(color: usize) -> u8 {
@@ -297,6 +316,7 @@ pub fn is_bright_rgb_band(color: usize) -> bool {
     let color = wrap(color);
     color >= 0x75
 }
+
 /// return a brighter color from the given rgb band
 pub fn bright_rgb_band(color: usize) -> u8 {
     if !is_bright_rgb_band(color) {
@@ -305,6 +325,7 @@ pub fn bright_rgb_band(color: usize) -> u8 {
         wrap(color)
     }
 }
+
 /// return a brighter color near the given one via [bright_rgb_band].
 #[cfg(feature = "colorsys")]
 pub fn bright(color: usize) -> u8 {
@@ -313,6 +334,7 @@ pub fn bright(color: usize) -> u8 {
     rgb.lighten(50.0);
     Ansi256::from(rgb).code()
 }
+
 /// return a brighter color near the given one via [bright_rgb_band].
 #[cfg(not(feature = "colorsys"))]
 pub fn bright(color: usize) -> u8 {
@@ -324,11 +346,13 @@ pub fn bright(color: usize) -> u8 {
         bright_rgb_band(b as usize),
     ])
 }
+
 /// return true if the given rgb band is dark
 pub fn is_dark_rgb_band(color: usize) -> bool {
     let color = wrap(color);
     color <= 0x75
 }
+
 /// return a darker color from the given rgb band
 pub fn dark_rgb_band(color: usize) -> u8 {
     let color = wrap(color);
@@ -338,6 +362,7 @@ pub fn dark_rgb_band(color: usize) -> u8 {
         color
     }
 }
+
 /// return a darker color near the given one via [dark_rgb_band].
 #[cfg(feature = "colorsys")]
 pub fn dark(color: usize) -> u8 {
@@ -432,6 +457,7 @@ pub fn cube_ansi_256(color: usize, op: usize) -> u8 {
         wrap((14135 + 10280 * cube) / 256)
     }
 }
+
 pub fn get_ansi_rgb(color: usize) -> [u8; 3] {
     let tuple = rgb_from_ansi256(wrap(color));
     [tuple.0, tuple.1, tuple.2]
@@ -479,6 +505,7 @@ pub fn format_slice_display<I: IntoIterator<Item: Display>>(items: I, color: boo
             .join(", ")
     )
 }
+
 pub fn format_slice_debug<I: IntoIterator<Item: Debug>>(items: I, color: bool) -> String {
     format!(
         "[{}]",
